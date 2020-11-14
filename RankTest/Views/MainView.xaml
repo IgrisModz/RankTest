@@ -1,0 +1,462 @@
+﻿<UserControl x:Class="RankTest.Views.MainView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:System="clr-namespace:System;assembly=mscorlib"
+             xmlns:beh="clr-namespace:RankTest.Behaviors"
+             xmlns:viewModels="clr-namespace:RankTest.ViewModels"
+             xmlns:local="clr-namespace:RankTest"
+             mc:Ignorable="d" 
+             d:DesignHeight="550" d:DesignWidth="820">
+    <UserControl.DataContext>
+        <viewModels:MainViewModel/>
+    </UserControl.DataContext>
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MahApps.Styles.Button}">
+            <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal"/>
+            <Setter Property="mah:ControlsHelper.CornerRadius" Value="0"/>
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+        <Style TargetType="{x:Type GroupBox}" BasedOn="{StaticResource MahApps.Styles.GroupBox}">
+            <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal"/>
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+        <Style TargetType="{x:Type ComboBox}" BasedOn="{StaticResource MahApps.Styles.ComboBox}">
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+        <Style TargetType="{x:Type Label}" BasedOn="{StaticResource MahApps.Styles.Label}">
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+        <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource MahApps.Styles.TabItem}">
+            <Setter Property="mah:HeaderedControlHelper.HeaderFontSize" Value="14"/>
+        </Style>
+        <Style TargetType="{x:Type DataGridColumnHeader}" BasedOn="{StaticResource MahApps.Styles.DataGridColumnHeader}">
+            <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal"/>
+        </Style>
+        <Style TargetType="{x:Type mah:NumericUpDown}">
+            <Setter Property="Margin" Value="3"/>
+        </Style>
+        <ObjectDataProvider x:Key="WeaponEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:WeaponIndex"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="ProficienciesEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:Proficiencies"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="AttachmentsEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:Attachments"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="ReticlesEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:Reticle"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="CamosEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:Camos"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="LethalsEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:Lethal"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="TacticalsEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:Tactical"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="Perks1Enum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:Perks1"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="Perks2Enum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:Perks2"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="Perks3Enum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:Perks3"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="StrikePackageEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:StrikePackage"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="AssaultsEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:Assault"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="SupportsEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:Support"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="SpecialistsEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:Specialist"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+        <ObjectDataProvider x:Key="DeathstreaksEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:Deathstreaks"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="3*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Menu x:Name="MainMenu" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
+            <MenuItem x:Name="apiItem" Header="API">
+                <MenuItem x:Name="tmapiItem" Header="TMAPI" Command="{Binding TMAPICommand}"/>
+                <MenuItem x:Name="ccapiItem" Header="CCAPI" Command="{Binding CCAPICommand}"/>
+                <MenuItem x:Name="ps3mapiItem" Header="PS3MAPI" Command="{Binding PS3MAPICommand}"/>
+            </MenuItem>
+            <MenuItem x:Name="connectItem" Header="Connection" Command="{Binding ConnectCommand}"/>
+        </Menu>
+        <StackPanel Grid.Column="0" Grid.Row="1">
+            <GroupBox x:Name="actionStatsGroup" Header="Actions">
+                <StackPanel Margin="-3">
+                    <Button x:Name="getStatsBtn" Content="Get stats" Command="{Binding GetStatsCommand}"/>
+                    <Button x:Name="setStatsBtn" Content="Set stats" Command="{Binding SetStatsCommand}"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox x:Name="generateStatsGroup" Header="Generate stats">
+                <StackPanel Margin="-3">
+                    <Button x:Name="highStatsBtn" Content="High stats" Command="{Binding HighStatsCommand}"/>
+                    <Button x:Name="legitStatsBtn" Content="Legit stats" Command="{Binding LegitStatsCommand}"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Grid.Row="1" Header="Generate classes name" IsEnabled="{Binding ClassesEnabled}">
+                <StackPanel Margin="-3">
+                    <Button x:Name="colorClassesBtn" Content="Color classes" Command="{Binding ColorClassesCommand}"/>
+                    <ComboBox x:Name="logoClassCmB" ItemsSource="{Binding LogoClasses}" SelectedItem="{Binding SelectedLogoClass}"/>
+                    <Button x:Name="logoClassNameBtn" Content="Logo class name" Command="{Binding LogoClassNameCommand}"/>
+                    <Button x:Name="logoAllClassesNameBtn" Content="Logo all classes name" Command="{Binding LogoAllClassesNameCommand}"/>
+                </StackPanel>
+            </GroupBox>
+            <GroupBox Grid.Row="2" Header="Generate custom classes" IsEnabled="{Binding ClassesEnabled}">
+                <StackPanel Margin="-3">
+                    <ComboBox x:Name="customClassesCmB" ItemsSource="{Binding CustomsClasses}" SelectedItem="{Binding SelectedCustomClass}"/>
+                    <Button x:Name="setCustomClassBtn" Content="Godmode classes" Command="{Binding SetCustomClassCommand}"/>
+                    <CheckBox x:Name="godmodeChB" Margin="3" Content="Godmode" IsChecked="{Binding SelectedClass.Godmode, Mode=TwoWay}" IsEnabled="{Binding GodmodeBool}"/>
+                </StackPanel>
+            </GroupBox>
+        </StackPanel>
+        <TabControl Grid.Column="1" Grid.Row="1">
+            <TabItem x:Name="statsTabItem" Header="Stats">
+                <StackPanel Margin="-3" IsEnabled="{Binding StatsEnabled}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Label Grid.Column="0" Grid.Row="0" Content="Prestige:"/>
+                        <mah:NumericUpDown x:Name="prestigeNumUpDown" Grid.Column="1" Grid.Row="0" Minimum="0" Maximum="21"
+                                       Value="{Binding Stats.Prestige, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="0" Grid.Row="1" Content="Level:"/>
+                        <mah:NumericUpDown x:Name="levelNumUpDown" Grid.Column="1" Grid.Row="1" Minimum="1" Maximum="80"
+                                       Value="{Binding Stats.Level, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="0" Grid.Row="2" Content="Score:"/>
+                        <mah:NumericUpDown x:Name="scoreNumUpDown" Grid.Column="1" Grid.Row="2" Minimum="-2147483648" Maximum="2147483647"
+                                       Value="{Binding Stats.Score, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="0" Grid.Row="3" Content="Wins:"/>
+                        <mah:NumericUpDown x:Name="winsNumUpDown" Grid.Column="1" Grid.Row="3" Minimum="-2147483648" Maximum="2147483647"
+                                       Value="{Binding Stats.Wins, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="0" Grid.Row="4" Content="Losses:"/>
+                        <mah:NumericUpDown x:Name="lossesNumUpDown" Grid.Column="1" Grid.Row="4" Minimum="-2147483648" Maximum="2147483647"
+                                       Value="{Binding Stats.Losses, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="0" Grid.Row="5" Content="Ties:"/>
+                        <mah:NumericUpDown x:Name="tiesNumUpDown" Grid.Column="1" Grid.Row="5" Minimum="-2147483648" Maximum="2147483647"
+                                       Value="{Binding Stats.Ties, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="0" Grid.Row="6" Content="Winstreak:"/>
+                        <mah:NumericUpDown x:Name="winstreakNumUpDown" Grid.Column="1" Grid.Row="6" Minimum="-2147483648" Maximum="2147483647"
+                                       Value="{Binding Stats.Winstreak, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="0" Grid.Row="7" Content="Kills:"/>
+                        <mah:NumericUpDown x:Name="killsNumUpDown" Grid.Column="1" Grid.Row="7" Minimum="-2147483648" Maximum="2147483647"
+                                       Value="{Binding Stats.Kills, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="0" Grid.Row="8" Content="Deaths:"/>
+                        <mah:NumericUpDown x:Name="deathsNumUpDown" Grid.Column="1" Grid.Row="8" Minimum="-2147483648" Maximum="2147483647"
+                                       Value="{Binding Stats.Deaths, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="0" Grid.Row="9" Content="Headshots:"/>
+                        <mah:NumericUpDown x:Name="headshotsNumUpDown" Grid.Column="1" Grid.Row="9" Minimum="-2147483648" Maximum="2147483647"
+                                       Value="{Binding Stats.Headshots, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="0" Grid.Row="10" Content="Assists:"/>
+                        <mah:NumericUpDown x:Name="assistsNumUpDown" Grid.Column="1" Grid.Row="10" Minimum="-2147483648" Maximum="2147483647"
+                                       Value="{Binding Stats.Assists, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="0" Grid.Row="11" Content="Killstreak:"/>
+                        <mah:NumericUpDown x:Name="killstreakNumUpDown" Grid.Column="1" Grid.Row="11" Minimum="-2147483648" Maximum="2147483647"
+                                       Value="{Binding Stats.Killstreak, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="2" Grid.Row="0" Content="Time played:"/>
+                        <UniformGrid Grid.Column="3" Grid.Row="0" Columns="3">
+                            <mah:NumericUpDown x:Name="daysTimePlayedNumUpDown" Grid.Column="3" Grid.Row="7" Minimum="0" Maximum="24853"
+                                           Value="{Binding Stats.TimePlayed[0], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <mah:NumericUpDown x:Name="hoursTimePlayedNumUpDown" Grid.Column="3" Grid.Row="7" Minimum="0" Maximum="23"
+                                           Value="{Binding Stats.TimePlayed[1], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <mah:NumericUpDown x:Name="minutesTimePlayedNumUpDown" Grid.Column="3" Grid.Row="7" Minimum="0" Maximum="59"
+                                           Value="{Binding Stats.TimePlayed[2], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </UniformGrid>
+                        <Label Grid.Column="2" Grid.Row="1" Content="Double xp:"/>
+                        <UniformGrid Grid.Column="3" Grid.Row="1" Columns="3">
+                            <mah:NumericUpDown x:Name="daysDoubleXpNumUpDown" Grid.Column="3" Grid.Row="7" Minimum="0" Maximum="24853"
+                                           Value="{Binding Stats.DoubleXp[0], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <mah:NumericUpDown x:Name="hoursDoubleXpNumUpDown" Grid.Column="3" Grid.Row="7" Minimum="0" Maximum="23"
+                                           Value="{Binding Stats.DoubleXp[1], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <mah:NumericUpDown x:Name="minutesDoubleXpNumUpDown" Grid.Column="3" Grid.Row="7" Minimum="0" Maximum="59"
+                                           Value="{Binding Stats.DoubleXp[2], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </UniformGrid>
+                        <Label Grid.Column="2" Grid.Row="2" Content="Double weapon xp:"/>
+                        <UniformGrid Grid.Column="3" Grid.Row="2" Columns="3">
+                            <mah:NumericUpDown x:Name="daysDoubleWeaponXpNumUpDown" Grid.Column="3" Grid.Row="7" Minimum="0" Maximum="24853"
+                                           Value="{Binding Stats.DoubleWeaponXp[0], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <mah:NumericUpDown x:Name="hoursDoubleWeaponXpNumUpDown" Grid.Column="3" Grid.Row="7" Minimum="0" Maximum="23"
+                                           Value="{Binding Stats.DoubleWeaponXp[1], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <mah:NumericUpDown x:Name="minutesDoubleWeaponXpNumUpDown" Grid.Column="3" Grid.Row="7" Minimum="0" Maximum="59"
+                                           Value="{Binding Stats.DoubleWeaponXp[2], Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        </UniformGrid>
+                        <Label Grid.Column="2" Grid.Row="3" Content="Hits:"/>
+                        <mah:NumericUpDown x:Name="hitsNumUpDown" Grid.Column="3" Grid.Row="3" Minimum="-2147483648" Maximum="2147483647"
+                                       Value="{Binding Stats.Hits, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="2" Grid.Row="4" Content="Misses:"/>
+                        <mah:NumericUpDown x:Name="missesNumUpDown" Grid.Column="3" Grid.Row="4" Minimum="-2147483648" Maximum="2147483647"
+                                       Value="{Binding Stats.Misses, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="2" Grid.Row="5" Content="Tokens:"/>
+                        <mah:NumericUpDown x:Name="tokensNumUpDown" Grid.Column="3" Grid.Row="5" Minimum="-2147483648" Maximum="2147483647"
+                                       Value="{Binding Stats.Tokens, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="2" Grid.Row="6" Content="Add"/>
+                        <UniformGrid Grid.Column="3" Grid.Row="6" Columns="3">
+                            <mah:NumericUpDown x:Name="addClassesNumUpDown" Grid.Column="3" Grid.Row="7" Minimum="0" Maximum="10"
+                                       Value="{Binding Stats.AddClasses, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <Label Grid.Column="2" Grid.Row="6" Content="class(es)"/>
+                        </UniformGrid>
+                        <Label Grid.Column="2" Grid.Row="7" Content="Prestige mw:"/>
+                        <mah:NumericUpDown x:Name="mwPrestigeNumUpDown" Grid.Column="3" Grid.Row="7" Minimum="0" Maximum="11"
+                                       Value="{Binding Stats.MWPrestige, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="2" Grid.Row="8" Content="Prestige waw:"/>
+                        <mah:NumericUpDown x:Name="wawPrestigeNumUpDown" Grid.Column="3" Grid.Row="8" Minimum="0" Maximum="11"
+                                       Value="{Binding Stats.WAWPrestige, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="2" Grid.Row="9" Content="Prestige mw2:"/>
+                        <mah:NumericUpDown x:Name="mw2PrestigeNumUpDown" Grid.Column="3" Grid.Row="9" Minimum="0" Maximum="11"
+                                       Value="{Binding Stats.MW2Prestige, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <Label Grid.Column="2" Grid.Row="10" Content="Prestige bo:"/>
+                        <mah:NumericUpDown x:Name="boPrestigeNumUpDown" Grid.Column="3" Grid.Row="10" Minimum="0" Maximum="16"
+                                       Value="{Binding Stats.BOPrestige, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                        <CheckBox x:Name="unlockAllChB" Grid.Column="3" Grid.Row="11" Margin="3" Content="Unlock all" IsChecked="{Binding UnlockAll}"/>
+                    </Grid>
+                </StackPanel>
+            </TabItem>
+            <TabItem x:Name="classesTabItem" Header="Classes">
+                <Grid Margin="-3" IsEnabled="{Binding ClassesEnabled}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <DataGrid x:Name="ClassesDataGrid" Margin="3" MaxWidth="200"
+                          SelectionMode="Single" AutoGenerateColumns="False"
+                          CanUserAddRows="False" CanUserDeleteRows="False"
+                          CanUserReorderColumns="False" CanUserSortColumns="False"
+                          CanUserResizeColumns="False" CanUserResizeRows="False"
+                          ItemsSource="{Binding Classes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedClass, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn x:Name="ClassesNameColumn" Binding="{Binding Name}" Header="Classes name" Width="1*"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <GroupBox Header="Primary weapon">
+                            <StackPanel Margin="-3">
+                                <DockPanel>
+                                    <Label Content="Weapon"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource WeaponEnum}}" SelectedItem="{Binding SelectedClass.PrimaryWeapon, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Proficiency"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource ProficienciesEnum}}" SelectedItem="{Binding SelectedClass.PrimaryWeaponProficiency, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Attachment 1"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource AttachmentsEnum}}" SelectedItem="{Binding SelectedClass.PrimaryWeaponAttachment1, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Attachment 2"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource AttachmentsEnum}}" SelectedItem="{Binding SelectedClass.PrimaryWeaponAttachment2, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Reticle"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource ReticlesEnum}}" SelectedItem="{Binding SelectedClass.PrimaryWeaponReticle, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Camo"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource CamosEnum}}" SelectedItem="{Binding SelectedClass.PrimaryWeaponCamo, Mode=TwoWay}"/>
+                                </DockPanel>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Grid.Row="1" Header="Secondary weapon">
+                            <StackPanel Margin="-3">
+                                <DockPanel>
+                                    <Label Content="Weapon"/>
+                                    <ComboBox Grid.Column="1" ItemsSource="{Binding Source={StaticResource WeaponEnum}}" SelectedItem="{Binding SelectedClass.SecondaryWeapon, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Proficiency"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource ProficienciesEnum}}" SelectedItem="{Binding SelectedClass.SecondaryWeaponProficiency, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Attachment 1"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource AttachmentsEnum}}" SelectedItem="{Binding SelectedClass.SecondaryWeaponAttachment1, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Attachment 2"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource AttachmentsEnum}}" SelectedItem="{Binding SelectedClass.SecondaryWeaponAttachment2, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Reticle"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource ReticlesEnum}}" SelectedItem="{Binding SelectedClass.SecondaryWeaponReticle, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Camo"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource CamosEnum}}" SelectedItem="{Binding SelectedClass.SecondaryWeaponCamo, Mode=TwoWay}"/>
+                                </DockPanel>
+                            </StackPanel>
+                        </GroupBox>
+                    </Grid>
+                    <Grid Grid.Column="2">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <GroupBox Header="Lethal/Tactical">
+                            <StackPanel Margin="-3">
+                                <DockPanel>
+                                    <Label Content="Lethal"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource LethalsEnum}}" SelectedItem="{Binding SelectedClass.Lethal, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Tactical"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource TacticalsEnum}}" SelectedItem="{Binding SelectedClass.Tactical, Mode=TwoWay}"/>
+                                </DockPanel>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Grid.Row="1" Header="Perks">
+                            <StackPanel Margin="-3">
+                                <DockPanel>
+                                    <Label Content="Perk 1"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource Perks1Enum}}" SelectedItem="{Binding SelectedClass.Perk1, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Perk 2"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource Perks2Enum}}" SelectedItem="{Binding SelectedClass.Perk2, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Perk 3"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource Perks3Enum}}" SelectedItem="{Binding SelectedClass.Perk3, Mode=TwoWay}"/>
+                                </DockPanel>
+                            </StackPanel>
+                        </GroupBox>
+                    </Grid>
+                    <Grid Grid.Column="3">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        <GroupBox Header="Strike package">
+                            <StackPanel Margin="-3">
+                                <DockPanel>
+                                    <Label Content="Strike package"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource StrikePackageEnum}}" SelectedItem="{Binding SelectedClass.StrikePackage, Mode=TwoWay}" beh:SelectionChangedBehavior.Command="{Binding StrikePackageChangedCommand}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Assault 1"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource AssaultsEnum}}" SelectedItem="{Binding SelectedClass.Assault1, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Assault 2"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource AssaultsEnum}}" SelectedItem="{Binding SelectedClass.Assault2, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Assault 3"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource AssaultsEnum}}" SelectedItem="{Binding SelectedClass.Assault3, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Support 1"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource SupportsEnum}}" SelectedItem="{Binding SelectedClass.Support1, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Support 2"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource SupportsEnum}}" SelectedItem="{Binding SelectedClass.Support2, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Support 3"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource SupportsEnum}}" SelectedItem="{Binding SelectedClass.Support3, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Specialist 1"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource SpecialistsEnum}}" SelectedItem="{Binding SelectedClass.Specialist1, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Specialist 2"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource SpecialistsEnum}}" SelectedItem="{Binding SelectedClass.Specialist2, Mode=TwoWay}"/>
+                                </DockPanel>
+                                <DockPanel>
+                                    <Label Content="Specialist 3"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource SpecialistsEnum}}" SelectedItem="{Binding SelectedClass.Specialist3, Mode=TwoWay}"/>
+                                </DockPanel>
+                            </StackPanel>
+                        </GroupBox>
+                        <GroupBox Grid.Row="1" Header="Deathstreak">
+                            <StackPanel Margin="-3">
+                                <DockPanel>
+                                    <Label Content="Deathstreak"/>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource DeathstreaksEnum}}" SelectedItem="{Binding SelectedClass.Deathstreak, Mode=TwoWay}"/>
+                                </DockPanel>
+                            </StackPanel>
+                        </GroupBox>
+                    </Grid>
+                </Grid>
+            </TabItem>
+        </TabControl>
+        <StatusBar Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
+            <StatusBarItem x:Name="creatorItem" HorizontalAlignment="Right" Content="Created by Igris Modz"/>
+        </StatusBar>
+    </Grid>
+</UserControl>
