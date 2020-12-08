@@ -684,7 +684,8 @@ namespace RankTest.Core
             SetStat(Addresses.Stats.MW2Prestige, MW2Prestige);
             SetStat(Addresses.Stats.BOPrestige, BOPrestige);
             SetClasses();
-            SetUnlockAll();
+            if (unlockAll)
+                SetUnlockAll();
         }
         #endregion Set
 
