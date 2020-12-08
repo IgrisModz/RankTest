@@ -95,7 +95,7 @@ namespace IgrisLib
                 case "en-TT":
                 case "en-ZW":
                 case "en-PH":
-                    dict.Source = new Uri("..\\IgrisLib\\Resources\\en-US.xaml", UriKind.Relative);
+                    dict.Source = new Uri("pack://application:,,,/IgrisLib;Component/Resources/en-US.xaml", UriKind.Absolute);
                     break;
                 case "fr-FR":
                 case "fr-BE":
@@ -103,17 +103,17 @@ namespace IgrisLib
                 case "fr-CH":
                 case "fr-LU":
                 case "fr-MC":
-                    dict.Source = new Uri("..\\IgrisLib\\Resources\\fr-FR.xaml", UriKind.Relative);
+                    dict.Source = new Uri("pack://application:,,,/IgrisLib;Component/Resources/fr-FR.xaml", UriKind.Absolute);
                     break;
                 case "de-DE":
                 case "de-CH":
                 case "de-HK":
                 case "de-LU":
                 case "de-LI":
-                    dict.Source = new Uri("..\\IgrisLib\\Resources\\de-DE.xaml", UriKind.Relative);
+                    dict.Source = new Uri("pack://application:,,,/IgrisLib;Component/Resources/de-DE.xaml", UriKind.Absolute);
                     break;
                 default:
-                    dict.Source = new Uri("..\\IgrisLib\\Resources\\en-US.xaml", UriKind.Relative);
+                    dict.Source = new Uri("pack://application:,,,/IgrisLib;Component/Resources/en-US.xaml", UriKind.Absolute);
                     break;
             }
             this.resources.MergedDictionaries.Add(dict);

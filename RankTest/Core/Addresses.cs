@@ -1,4 +1,4 @@
-﻿namespace RankTest.Modz
+﻿namespace RankTest.Core
 {
     internal class Addresses
     {

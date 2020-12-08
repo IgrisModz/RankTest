@@ -1,4 +1,4 @@
-﻿namespace RankTest.Models
+﻿namespace RankTest.Core
 {
     public class Class
     {

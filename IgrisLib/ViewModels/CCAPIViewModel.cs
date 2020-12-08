@@ -1,6 +1,8 @@
 ﻿using IgrisLib.MessageBox;
 using IgrisLib.Mvvm;
 using IgrisLib.Views;
+using MahApps.Metro.Controls.Dialogs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
@@ -9,11 +11,10 @@ namespace IgrisLib.ViewModels
 {
     public class CCAPIViewModel : ViewModelBase
     {
-        private ResourceDictionary Resources;
-        private CCAPIWindow Win;
+        private IDialogCoordinator dialogCoordinator;
+        private readonly ResourceDictionary Resources;
+        private readonly CCAPIWindow Win;
         private Consoles selectedConsole;
-        private List<Consoles> consoles;
-        private bool connectEnabled;
 
         public IConnectAPI Api { get; set; }
 
@@ -27,27 +28,38 @@ namespace IgrisLib.ViewModels
             }
         }
 
-        public List<Consoles> Consoles { get => consoles; set => SetProperty(ref consoles, value); }
+        public List<Consoles> Consoles { get => GetValue(() => Consoles); set => SetValue(() => Consoles, value); }
 
-        public bool ConnectEnabled { get => connectEnabled; set => SetProperty(ref connectEnabled, value); }
+        public bool ConnectEnabled { get => GetValue(() => ConnectEnabled); set => SetValue(() => ConnectEnabled, value); }
 
         public DelegateCommand ConnectCommand { get; }
 
         public DelegateCommand RefreshCommand { get; }
 
-        public CCAPIViewModel(CCAPIWindow win, IConnectAPI api, ResourceDictionary resources)
+        public CCAPIViewModel(CCAPIWindow win, IDialogCoordinator instance, IConnectAPI api, ResourceDictionary resources)
         {
-            Win = win;
-            Api = api;
-            Resources = resources;
-            ConnectCommand = new DelegateCommand(Connect);
-            RefreshCommand = new DelegateCommand(Refresh);
+            Win = win ?? throw new ArgumentNullException(nameof(win));
+            dialogCoordinator = instance ?? throw new ArgumentNullException(nameof(instance));
+            Api = api ?? throw new ArgumentNullException(nameof(api));
+            Resources = resources ?? throw new ArgumentNullException(nameof(resources));
+            ConnectCommand = new DelegateCommand(Connect, CanExecuteConnect);
+            RefreshCommand = new DelegateCommand(Refresh, CanExecuteRefresh);
             Refresh();
         }
 
         private CCAPIViewModel()
         {
 
+        }
+
+        private bool CanExecuteConnect()
+        {
+            return Api != null && SelectedConsole != null;
+        }
+
+        private bool CanExecuteRefresh()
+        {
+            return Api != null;
         }
 
         private List<Consoles> GetConsoles()
@@ -61,7 +73,7 @@ namespace IgrisLib.ViewModels
             return list;
         }
 
-        private void Connect()
+        private async void Connect()
         {
             if (SelectedConsole != null)
             {
@@ -75,7 +87,7 @@ namespace IgrisLib.ViewModels
                 return;
             }
             else
-                IgrisMessageBox.Show(this.Resources["errorSelect"].ToString(), this.Resources["errorSelectTitle"].ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
+                await dialogCoordinator.ShowMessageAsync(this, Resources["errorSelectTitle"].ToString(), Resources["errorSelect"].ToString());
         }
 
         private void Refresh()

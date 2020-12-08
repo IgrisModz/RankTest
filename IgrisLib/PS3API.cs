@@ -1,20 +1,26 @@
-﻿using System.Collections.Generic;
+﻿using IgrisLib.Mvvm;
+using System.Collections.Generic;
 using System.Net;
 
 namespace IgrisLib
 {
-    public class PS3API
+    public class PS3API : ViewModelBase
     {
-        public bool IsConnected;
-
-        public bool IsAttached;
-
-        public string CurrentGame;
-
-        public string GameRegion;
-        public string TargetName { get; private set; }
-        public string TargetIp { get; private set; }
         private IApi api;
+        private bool isConnected, isAttached;
+
+        public bool IsConnected { get => isConnected; private set => SetProperty(ref isConnected, value); }
+
+        public bool IsAttached { get => isAttached; private set => SetProperty(ref isAttached, value); }
+
+        public string CurrentGame { get; private set; }
+
+        public string GameRegion { get; private set; }
+
+        public string TargetName { get; private set; }
+
+        public string TargetIp { get; private set; }
+
         public PS3API(IApi api)
         {
             this.api = api;
