@@ -2,15 +2,15 @@
 using System.Linq;
 using System.Text;
 
-namespace RankTest.Modz
+namespace RankTest.Core
 {
-    internal class Extension
+    internal class FunctionsExtension
     {
         internal byte[] Dump { get; set; }
 
-        internal Extension()
+        internal FunctionsExtension(uint length)
         {
-            Dump = new byte[Addresses.Length];
+            Dump = new byte[length];
         }
 
         /// <summary>Read a signed byte.</summary>

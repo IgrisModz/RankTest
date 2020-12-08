@@ -1,76 +1,194 @@
 ﻿using IgrisLib;
-using RankTest.Models;
+using IgrisLib.Mvvm;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
-namespace RankTest.Modz
+namespace RankTest.Core
 {
-    public class Functions
+    public class Stats : ViewModelBase
     {
-        public PS3API PS3 { get; }
+        public int Prestige { get; set; }
 
-        internal Extension Extension { get; }
+        public int Level { get; set; }
 
-        internal int IsInParty { get; private set; }
+        public int Score { get; set; }
 
-        internal uint MyIndex { get; private set; }
+        public int Wins { get; set; }
 
-        public Functions(PS3API ps3)
+        public int Losses { get; set; }
+
+        public int Ties { get; set; }
+
+        public int Winstreak { get; set; }
+
+        public int Kills { get; set; }
+
+        public int Deaths { get; set; }
+
+        public int Headshots { get; set; }
+
+        public int Assists { get; set; }
+
+        public int Killstreak { get; set; }
+
+        public int[] TimePlayed { get; set; }
+
+        public int[] DoubleXp { get; set; }
+
+        public int[] DoubleWeaponXp { get; set; }
+
+        public int Hits { get; set; }
+
+        public int Misses { get; set; }
+
+        public int Tokens { get; set; }
+
+        public int AddClasses { get; set; }
+
+        public int WAWPrestige { get; set; }
+
+        public int MW2Prestige { get; set; }
+
+        public int BOPrestige { get; set; }
+
+        public int MWPrestige { get; set; }
+
+        public ObservableCollection<Class> Classes { get => GetValue(() => Classes); set => SetValue(() => Classes, value); }
+
+        public PS3API PS3 { get; set; }
+
+        internal FunctionsExtension Extension { get; set; }
+
+        public Stats(PS3API ps3)
         {
             PS3 = ps3;
-            Extension = new Extension();
+            Extension = new FunctionsExtension(Addresses.Length);
+            Level = 1;
+            TimePlayed = new int[3];
+            DoubleXp = new int[3];
+            DoubleWeaponXp = new int[3];
         }
 
-        private Functions()
+        #region Stats Functions
+
+        private readonly List<int> levels = new List<int>()
         {
+            0,
+            800,
+            1900,
+            3100,
+            4900,
+            7100,
+            9600,
+            12400,
+            15600,
+            19200,
+            23100,
+            27500,
+            32400,
+            37800,
+            43700,
+            50100,
+            57000,
+            64400,
+            72300,
+            80700,
+            89600,
+            99000,
+            108900,
+            119300,
+            125000,
+            141600,
+            153500,
+            165900,
+            178800,
+            192200,
+            206200,
+            220800,
+            236000,
+            251800,
+            268200,
+            285200,
+            302800,
+            321000,
+            339800,
+            359200,
+            379200,
+            399800,
+            421000,
+            442800,
+            465200,
+            488200,
+            511800,
+            536000,
+            560800,
+            586200,
+            612350,
+            639250,
+            666900,
+            695300,
+            724450,
+            754350,
+            785000,
+            816400,
+            848550,
+            881450,
+            915100,
+            949500,
+            984650,
+            1020550,
+            1057200,
+            1094600,
+            1132750,
+            1171650,
+            1211300,
+            1251700,
+            1292850,
+            1334500,
+            1377150,
+            1420300,
+            1464450,
+            1509100,
+            1554750,
+            1600900,
+            1648050,
+            1746200
+        };
 
-        }
-
-        internal int InParty()
-        {
-            IsInParty = PS3.Extension.ReadBool(Addresses.IsInParty) ? 1 : 0;
-            return IsInParty;
-        }
-
-        public uint GetMyIndex()
-        {
-            string serverInfo = PS3.Extension.ReadString(Addresses.LocalXUIDString);
-            for (uint i = 0; i < 18; ++i)
-            {
-                if (serverInfo.Contains(BitConverter.ToString(PS3.Extension.ReadBytes(Addresses.GrabberXUID[IsInParty] + (i * Addresses.GrabberInterval), 8)).Replace("-", string.Empty)))
-                    return i;
-            }
-            return 18;
-        }
-
-        #region Get stats
+        #region Get
         private int GetDaysFromSeconds(int seconds)
         {
-            return (int)(seconds / (int)86400);
+            return seconds / 86400;
         }
 
         private int GetHoursFromSeconds(int seconds)
         {
-            int temp = seconds - ((int)((GetDaysFromSeconds(seconds) * 24) * 60) * 60);
-            return (int)(temp / (int)3600);
+            int temp = seconds - (GetDaysFromSeconds(seconds) * 24 * 60 * 60);
+            return temp / 3600;
         }
 
         private int GetMinutesFromSeconds(int seconds)
         {
-            int temp = seconds - ((int)((GetDaysFromSeconds(seconds) * 24) * 60) * 60);
-            temp -= (int)((GetHoursFromSeconds(seconds) * 60) * 60);
-            return (int)(temp / (int)60);
+            int temp = seconds - (GetDaysFromSeconds(seconds) * 24 * 60 * 60);
+            temp -= GetHoursFromSeconds(seconds) * 60 * 60;
+            return temp / 60;
         }
 
-        private float GetRatioAC(int a, int b) // Accuracy ratio
+        private float GetRatioAC(int hits, int misses) // Accuracy ratio
         {
-            return (float)(((float)a / ((float)a + (float)b)) * 100);
+            return hits / (hits + misses) * 100;
         }
 
         private float GetRatioKW(int a, int b) // Kill & Wins ratio
         {
             if (b == 0) b = 1;
-            return (float)((float)a / (float)b);
+            return a / b;
+        }
+
+        private int GetGamePlayed(int wins, int losses, int ties) // Accuracy ratio
+        {
+            return wins + losses + ties;
         }
 
         private int GetStat(Addresses.Stats stats, bool reverse = false)
@@ -78,7 +196,21 @@ namespace RankTest.Modz
             return Extension.ReadInt32((uint)stats, reverse);
         }
 
-        private int[] GetTimePlayed()
+        private int GetLevel()
+        {
+            int experience = GetStat(Addresses.Stats.Level);
+            if (experience == 1746200)
+                return 80;
+            for (int i = 0; i < levels.Count; i++)
+            {
+                if (!(levels[++i] >= levels.Count))
+                    if (experience >= levels[i] && experience < levels[++i])
+                        return ++i;
+            }
+            return 1;
+        }
+
+        public int[] GetTimePlayed()
         {
             byte[] Array1 = BitConverter.GetBytes((uint)GetStat(Addresses.Stats.TimePlayed1, true));
             Array.Reverse(Array1);
@@ -93,7 +225,7 @@ namespace RankTest.Modz
             return new int[] { daysFromSeconds, hoursFromSeconds, minutesFromSeconds };
         }
 
-        private int[] GetDoubleXP()
+        public int[] GetDoubleXP()
         {
             byte[] array = BitConverter.GetBytes((uint)GetStat(Addresses.Stats.DoubleXP, true));
             Array.Reverse(array);
@@ -104,7 +236,7 @@ namespace RankTest.Modz
             return new int[] { daysFromSeconds, hoursFromSeconds, minutesFromSeconds };
         }
 
-        private int[] GetDoubleWeaponXP()
+        public int[] GetDoubleWeaponXP()
         {
             byte[] array = BitConverter.GetBytes((uint)GetStat(Addresses.Stats.DoubleWeaponXP, true));
             Array.Reverse(array);
@@ -117,287 +249,49 @@ namespace RankTest.Modz
 
         public Stats GetStats()
         {
-            InParty();
-            return new Stats()
+            return new Stats(PS3)
             {
                 Prestige = GetStat(Addresses.Stats.Prestige),
-                Level = PS3.Extension.ReadInt32(Addresses.GrabberLevel[IsInParty] + (GetMyIndex() * Addresses.GrabberInterval)) + 1,
+                Level = GetLevel(),
                 Score = GetStat(Addresses.Stats.Score),
                 Wins = GetStat(Addresses.Stats.Wins),
                 Losses = GetStat(Addresses.Stats.Losses),
                 Ties = GetStat(Addresses.Stats.Ties),
                 Winstreak = GetStat(Addresses.Stats.Winstreak),
+                //RatioWL = Convert.ToSingle(GetStat(Addresses.Stats.RatioWL)) / 1000,
                 Kills = GetStat(Addresses.Stats.Kills),
                 Deaths = GetStat(Addresses.Stats.Deaths),
                 Headshots = GetStat(Addresses.Stats.Headshots),
                 Assists = GetStat(Addresses.Stats.Assists),
                 Killstreak = GetStat(Addresses.Stats.Killstreak),
+                //GamePlayed = GetStat(Addresses.Stats.GamePlayed),
+                //RatioKD = Convert.ToSingle(GetStat(Addresses.Stats.RatioKD)) / 1000,
                 TimePlayed = GetTimePlayed(),
                 DoubleXp = GetDoubleXP(),
                 DoubleWeaponXp = GetDoubleWeaponXP(),
                 Hits = GetStat(Addresses.Stats.Hits),
                 Misses = GetStat(Addresses.Stats.Misses),
+                //Accuracy = $"{Convert.ToSingle(GetStat(Addresses.Stats.Accuracy)) / 100}%",
                 Tokens = GetStat(Addresses.Stats.Tokens),
                 AddClasses = GetStat(Addresses.Stats.AddClasses),
                 MWPrestige = GetStat(Addresses.Stats.MWPrestige),
                 WAWPrestige = GetStat(Addresses.Stats.WAWPrestige),
                 MW2Prestige = GetStat(Addresses.Stats.MW2Prestige),
                 BOPrestige = GetStat(Addresses.Stats.BOPrestige),
+                Classes = GetClasses()
             };
         }
-        #endregion
+        #endregion Get
 
-        #region Set stats
-        public void SetLevel(int value)
+        #region Set
+        private void SetStat(Addresses.Stats stats, int value)
         {
-            int returnExp;
-            switch (value)
-            {
-                case 1:
-                    returnExp = 0;
-                    break;
-                case 2:
-                    returnExp = 800;
-                    break;
-                case 3:
-                    returnExp = 1900;
-                    break;
-                case 4:
-                    returnExp = 3100;
-                    break;
-                case 5:
-                    returnExp = 4900;
-                    break;
-                case 6:
-                    returnExp = 7100;
-                    break;
-                case 7:
-                    returnExp = 9600;
-                    break;
-                case 8:
-                    returnExp = 12400;
-                    break;
-                case 9:
-                    returnExp = 15600;
-                    break;
-                case 10:
-                    returnExp = 19200;
-                    break;
-                case 11:
-                    returnExp = 23100;
-                    break;
-                case 12:
-                    returnExp = 27500;
-                    break;
-                case 13:
-                    returnExp = 32400;
-                    break;
-                case 14:
-                    returnExp = 37800;
-                    break;
-                case 15:
-                    returnExp = 43700;
-                    break;
-                case 16:
-                    returnExp = 50100;
-                    break;
-                case 17:
-                    returnExp = 57000;
-                    break;
-                case 18:
-                    returnExp = 64400;
-                    break;
-                case 19:
-                    returnExp = 72300;
-                    break;
-                case 20:
-                    returnExp = 80700;
-                    break;
-                case 21:
-                    returnExp = 89600;
-                    break;
-                case 22:
-                    returnExp = 99000;
-                    break;
-                case 23:
-                    returnExp = 108900;
-                    break;
-                case 24:
-                    returnExp = 119300;
-                    break;
-                case 25:
-                    returnExp = 125000;
-                    break;
-                case 26:
-                    returnExp = 141600;
-                    break;
-                case 27:
-                    returnExp = 153500;
-                    break;
-                case 28:
-                    returnExp = 165900;
-                    break;
-                case 29:
-                    returnExp = 178800;
-                    break;
-                case 30:
-                    returnExp = 192200;
-                    break;
-                case 31:
-                    returnExp = 206200;
-                    break;
-                case 32:
-                    returnExp = 220800;
-                    break;
-                case 33:
-                    returnExp = 236000;
-                    break;
-                case 34:
-                    returnExp = 251800;
-                    break;
-                case 35:
-                    returnExp = 268200;
-                    break;
-                case 36:
-                    returnExp = 285200;
-                    break;
-                case 37:
-                    returnExp = 302800;
-                    break;
-                case 38:
-                    returnExp = 321000;
-                    break;
-                case 39:
-                    returnExp = 339800;
-                    break;
-                case 40:
-                    returnExp = 359200;
-                    break;
-                case 41:
-                    returnExp = 379200;
-                    break;
-                case 42:
-                    returnExp = 399800;
-                    break;
-                case 43:
-                    returnExp = 421000;
-                    break;
-                case 44:
-                    returnExp = 442800;
-                    break;
-                case 45:
-                    returnExp = 465200;
-                    break;
-                case 46:
-                    returnExp = 488200;
-                    break;
-                case 47:
-                    returnExp = 511800;
-                    break;
-                case 48:
-                    returnExp = 536000;
-                    break;
-                case 49:
-                    returnExp = 560800;
-                    break;
-                case 50:
-                    returnExp = 586200;
-                    break;
-                case 51:
-                    returnExp = 612350;
-                    break;
-                case 52:
-                    returnExp = 639250;
-                    break;
-                case 53:
-                    returnExp = 666900;
-                    break;
-                case 54:
-                    returnExp = 695300;
-                    break;
-                case 55:
-                    returnExp = 724450;
-                    break;
-                case 56:
-                    returnExp = 754350;
-                    break;
-                case 57:
-                    returnExp = 785000;
-                    break;
-                case 58:
-                    returnExp = 816400;
-                    break;
-                case 59:
-                    returnExp = 848550;
-                    break;
-                case 60:
-                    returnExp = 881450;
-                    break;
-                case 61:
-                    returnExp = 915100;
-                    break;
-                case 62:
-                    returnExp = 949500;
-                    break;
-                case 63:
-                    returnExp = 984650;
-                    break;
-                case 64:
-                    returnExp = 1020550;
-                    break;
-                case 65:
-                    returnExp = 1057200;
-                    break;
-                case 66:
-                    returnExp = 1094600;
-                    break;
-                case 67:
-                    returnExp = 1132750;
-                    break;
-                case 68:
-                    returnExp = 1171650;
-                    break;
-                case 69:
-                    returnExp = 1211300;
-                    break;
-                case 70:
-                    returnExp = 1251700;
-                    break;
-                case 71:
-                    returnExp = 1292850;
-                    break;
-                case 72:
-                    returnExp = 1334500;
-                    break;
-                case 73:
-                    returnExp = 1377150;
-                    break;
-                case 74:
-                    returnExp = 1420300;
-                    break;
-                case 75:
-                    returnExp = 1464450;
-                    break;
-                case 76:
-                    returnExp = 1509100;
-                    break;
-                case 77:
-                    returnExp = 1554750;
-                    break;
-                case 78:
-                    returnExp = 1600900;
-                    break;
-                case 79:
-                    returnExp = 1648050;
-                    break;
-                case 80:
-                    returnExp = 1746200;
-                    break;
-                default:
-                    returnExp = 1746200;
-                    break;
-            }
-            SetStat(Addresses.Stats.Level, returnExp);
+            Extension.WriteInt32((uint)stats, value, false);
+        }
+
+        private void SetStat(Addresses.Stats stats, byte[] value)
+        {
+            Extension.WriteBytes((uint)stats, value);
         }
 
         public void SetTimePlayed(int Days, int Hours, int Minutes)
@@ -761,53 +655,50 @@ namespace RankTest.Modz
             SetStat(Addresses.Stats.EliteCamo, new byte[1] { 0xFF });
         }
 
-        private void SetStat(Addresses.Stats stats, int value)
+        public void SetStats(bool unlockAll)
         {
-            Extension.WriteInt32((uint)stats, value, false);
-        }
+            SetStat(Addresses.Stats.Prestige, Prestige);
+            SetStat(Addresses.Stats.Level, levels[--Level]);
+            SetStat(Addresses.Stats.Score, Score);
+            SetStat(Addresses.Stats.Wins, Wins);
+            SetStat(Addresses.Stats.Losses, Losses);
+            SetStat(Addresses.Stats.Ties, Ties);
+            SetStat(Addresses.Stats.Winstreak, Winstreak);
 
-        private void SetStat(Addresses.Stats stats, byte[] value)
-        {
-            Extension.WriteBytes((uint)stats, value);
-        }
+            SetStat(Addresses.Stats.Kills, Kills);
+            SetStat(Addresses.Stats.Deaths, Deaths);
+            SetStat(Addresses.Stats.Headshots, Headshots);
+            SetStat(Addresses.Stats.Assists, Assists);
+            SetStat(Addresses.Stats.Killstreak, Killstreak);
 
-        public void SetStats(Stats stats, bool unlockAll)
-        {
-            SetStat(Addresses.Stats.Prestige, stats.Prestige);
-            SetLevel(stats.Level);
-            SetStat(Addresses.Stats.Score, stats.Score);
-            SetStat(Addresses.Stats.Wins, stats.Wins);
-            SetStat(Addresses.Stats.Losses, stats.Winstreak);
-            SetStat(Addresses.Stats.Ties, stats.Ties);
-            SetStat(Addresses.Stats.Winstreak, stats.Winstreak);
-            SetStat(Addresses.Stats.Kills, stats.Kills);
-            SetStat(Addresses.Stats.Deaths, stats.Deaths);
-            SetStat(Addresses.Stats.Headshots, stats.Winstreak);
-            SetStat(Addresses.Stats.Assists, stats.Assists);
-            SetStat(Addresses.Stats.Killstreak, stats.Killstreak);
-            SetTimePlayed(stats.TimePlayed[0], stats.TimePlayed[1], stats.TimePlayed[2]);
-            SetDoubleXp(stats.DoubleXp[0], stats.DoubleXp[1], stats.DoubleXp[2]);
-            SetDoubleWeaponXp(stats.DoubleWeaponXp[0], stats.DoubleWeaponXp[1], stats.DoubleWeaponXp[2]);
-            SetStat(Addresses.Stats.Hits, stats.Hits);
-            SetStat(Addresses.Stats.Misses, stats.Misses);
-            SetStat(Addresses.Stats.Tokens, stats.Tokens);
-            SetStat(Addresses.Stats.AddClasses, stats.AddClasses);
-            SetStat(Addresses.Stats.MWPrestige, stats.MWPrestige);
-            SetStat(Addresses.Stats.WAWPrestige, stats.WAWPrestige);
-            SetStat(Addresses.Stats.MW2Prestige, stats.MW2Prestige);
-            SetStat(Addresses.Stats.BOPrestige, stats.BOPrestige);
-            if (unlockAll)
-                SetUnlockAll();
-        }
-        #endregion
+            SetTimePlayed(TimePlayed[0], TimePlayed[1], TimePlayed[2]);
+            SetDoubleXp(DoubleXp[0], DoubleXp[1], DoubleXp[2]);
+            SetDoubleWeaponXp(DoubleWeaponXp[0], DoubleWeaponXp[1], DoubleWeaponXp[2]);
+            SetStat(Addresses.Stats.Hits, Hits);
+            SetStat(Addresses.Stats.Misses, Misses);
 
-        #region Get classes
-        private T GetEnumSelection<T>(byte value)
+            SetStat(Addresses.Stats.Tokens, Tokens);
+            SetStat(Addresses.Stats.AddClasses, AddClasses);
+            SetStat(Addresses.Stats.MWPrestige, MWPrestige);
+            SetStat(Addresses.Stats.WAWPrestige, WAWPrestige);
+            SetStat(Addresses.Stats.MW2Prestige, MW2Prestige);
+            SetStat(Addresses.Stats.BOPrestige, BOPrestige);
+            SetClasses();
+            SetUnlockAll();
+        }
+        #endregion Set
+
+        #endregion Stats Functions
+
+        #region Classes Functions
+
+        #region Get
+        public T GetEnumSelection<T>(byte value)
         {
             return (T)Enum.Parse(typeof(T), value.ToString());
         }
 
-        private T GetClass<T>(Addresses.Classes offset, uint index)
+        private T GetClassInfo<T>(Addresses.Classes offset, uint index)
         {
             return GetEnumSelection<T>(Extension.ReadByte((uint)offset + (index * (uint)Addresses.Classes.ClassInterval)));
 
@@ -818,57 +709,52 @@ namespace RankTest.Modz
             return Extension.ReadString((uint)Addresses.Classes.ClassName1 + (index * (uint)Addresses.Classes.ClassInterval));
         }
 
-        private bool GetGodmode(uint index)
+        public ObservableCollection<Class> GetClasses()
         {
-            return Convert.ToBoolean(Extension.ReadByte((uint)Addresses.Classes.GodmodeClass1 + (index * (uint)Addresses.Classes.ClassInterval)));
-        }
-
-        public List<Class> GetClasses()
-        {
-            List<Class> classes = new List<Class>();
+            ObservableCollection<Class> classes = new ObservableCollection<Class>();
             for (uint i = 0; i < 20; i++)
             {
-                classes.Add(new Class
+                classes.Add(new Class()
                 {
                     Id = i,
                     Name = GetClassName(i),
-                    PrimaryWeapon = GetClass<WeaponIndex>(Addresses.Classes.PrimaryWeapon, i),
-                    PrimaryWeaponProficiency = GetClass<Proficiencies>(Addresses.Classes.PrimaryWeaponProficiency, i),
-                    PrimaryWeaponAttachment1 = GetClass<Attachments>(Addresses.Classes.PrimaryWeaponAttachment1, i),
-                    PrimaryWeaponAttachment2 = GetClass<Attachments>(Addresses.Classes.PrimaryWeaponAttachment2, i),
-                    PrimaryWeaponReticle = GetClass<Reticle>(Addresses.Classes.PrimaryWeaponReticle, i),
-                    PrimaryWeaponCamo = GetClass<Camos>(Addresses.Classes.PrimaryWeaponCamo, i),
-                    SecondaryWeapon = GetClass<WeaponIndex>(Addresses.Classes.SecondaryWeapon, i),
-                    SecondaryWeaponProficiency = GetClass<Proficiencies>(Addresses.Classes.SecondaryWeaponProficiency, i),
-                    SecondaryWeaponAttachment1 = GetClass<Attachments>(Addresses.Classes.SecondaryWeaponAttachment1, i),
-                    SecondaryWeaponAttachment2 = GetClass<Attachments>(Addresses.Classes.SecondaryWeaponAttachment2, i),
-                    SecondaryWeaponReticle = GetClass<Reticle>(Addresses.Classes.SecondaryWeaponReticle, i),
-                    SecondaryWeaponCamo = GetClass<Camos>(Addresses.Classes.SecondaryWeaponCamo, i),
-                    Lethal = GetClass<Lethal>(Addresses.Classes.Lethal, i),
-                    Tactical = GetClass<Tactical>(Addresses.Classes.Tactical, i),
-                    Perk1 = GetClass<Perks1>(Addresses.Classes.Perk1, i),
-                    Perk2 = GetClass<Perks2>(Addresses.Classes.Perk2, i),
-                    Perk3 = GetClass<Perks3>(Addresses.Classes.Perk3, i),
-                    StrikePackage = GetClass<StrikePackage>(Addresses.Classes.StrikePackage, i),
-                    Assault1 = GetClass<Assault>(Addresses.Classes.Assault1, i),
-                    Assault2 = GetClass<Assault>(Addresses.Classes.Assault2, i),
-                    Assault3 = GetClass<Assault>(Addresses.Classes.Assault3, i),
-                    Support1 = GetClass<Support>(Addresses.Classes.Support1, i),
-                    Support2 = GetClass<Support>(Addresses.Classes.Support2, i),
-                    Support3 = GetClass<Support>(Addresses.Classes.Support3, i),
-                    Specialist1 = GetClass<Specialist>(Addresses.Classes.Specialist1, i),
-                    Specialist2 = GetClass<Specialist>(Addresses.Classes.Specialist2, i),
-                    Specialist3 = GetClass<Specialist>(Addresses.Classes.Specialist3, i),
-                    Deathstreak = GetClass<Deathstreaks>(Addresses.Classes.Deathstreak, i),
-                    Godmode = GetGodmode(i)
+                    PrimaryWeapon = GetClassInfo<WeaponIndex>(Addresses.Classes.PrimaryWeapon, i),
+                    PrimaryWeaponProficiency = GetClassInfo<Proficiencies>(Addresses.Classes.PrimaryWeaponProficiency, i),
+                    PrimaryWeaponAttachment1 = GetClassInfo<Attachments>(Addresses.Classes.PrimaryWeaponAttachment1, i),
+                    PrimaryWeaponAttachment2 = GetClassInfo<Attachments>(Addresses.Classes.PrimaryWeaponAttachment2, i),
+                    PrimaryWeaponReticle = GetClassInfo<Reticle>(Addresses.Classes.PrimaryWeaponReticle, i),
+                    PrimaryWeaponCamo = GetClassInfo<Camos>(Addresses.Classes.PrimaryWeaponCamo, i),
+                    SecondaryWeapon = GetClassInfo<WeaponIndex>(Addresses.Classes.SecondaryWeapon, i),
+                    SecondaryWeaponProficiency = GetClassInfo<Proficiencies>(Addresses.Classes.SecondaryWeaponProficiency, i),
+                    SecondaryWeaponAttachment1 = GetClassInfo<Attachments>(Addresses.Classes.SecondaryWeaponAttachment1, i),
+                    SecondaryWeaponAttachment2 = GetClassInfo<Attachments>(Addresses.Classes.SecondaryWeaponAttachment2, i),
+                    SecondaryWeaponReticle = GetClassInfo<Reticle>(Addresses.Classes.SecondaryWeaponReticle, i),
+                    SecondaryWeaponCamo = GetClassInfo<Camos>(Addresses.Classes.SecondaryWeapon, i),
+                    Lethal = GetClassInfo<Lethal>(Addresses.Classes.Lethal, i),
+                    Tactical = GetClassInfo<Tactical>(Addresses.Classes.Tactical, i),
+                    Perk1 = GetClassInfo<Perks1>(Addresses.Classes.Perk1, i),
+                    Perk2 = GetClassInfo<Perks2>(Addresses.Classes.Perk2, i),
+                    Perk3 = GetClassInfo<Perks3>(Addresses.Classes.Perk3, i),
+                    StrikePackage = GetClassInfo<StrikePackage>(Addresses.Classes.StrikePackage, i),
+                    Assault1 = GetClassInfo<Assault>(Addresses.Classes.Assault1, i),
+                    Assault2 = GetClassInfo<Assault>(Addresses.Classes.Assault2, i),
+                    Assault3 = GetClassInfo<Assault>(Addresses.Classes.Assault3, i),
+                    Support1 = GetClassInfo<Support>(Addresses.Classes.Support1, i),
+                    Support2 = GetClassInfo<Support>(Addresses.Classes.Support2, i),
+                    Support3 = GetClassInfo<Support>(Addresses.Classes.Support3, i),
+                    Specialist1 = GetClassInfo<Specialist>(Addresses.Classes.Specialist1, i),
+                    Specialist2 = GetClassInfo<Specialist>(Addresses.Classes.Specialist2, i),
+                    Specialist3 = GetClassInfo<Specialist>(Addresses.Classes.Specialist3, i),
+                    Deathstreak = GetClassInfo<Deathstreaks>(Addresses.Classes.Deathstreak, i),
+                    Godmode = Convert.ToBoolean(GetClassInfo<GmodeIndex>(Addresses.Classes.GodmodeClass1, i)),
                 });
             }
             return classes;
         }
-        #endregion
+        #endregion Get
 
-        #region Set classes
-        private void SetClass<T>(Addresses.Classes offsets, uint index, T value)
+        #region Set
+        private void SetClassInfo<T>(Addresses.Classes offsets, uint index, T value)
         {
             Extension.WriteByte((uint)offsets + (index * (uint)Addresses.Classes.ClassInterval), Convert.ToByte(value));
         }
@@ -878,43 +764,45 @@ namespace RankTest.Modz
             Extension.WriteString((uint)Addresses.Classes.ClassName1 + (index * (uint)Addresses.Classes.ClassInterval), name);
         }
 
-        public void SetClasses(List<Class> classes)
+        public void SetClasses()
         {
-            foreach (var c in classes)
+            foreach (var c in Classes)
             {
                 uint id = c.Id;
-                SetClass(Addresses.Classes.PrimaryWeapon, id, c.PrimaryWeapon);
-                SetClass(Addresses.Classes.PrimaryWeaponProficiency, id, c.PrimaryWeaponProficiency);
-                SetClass(Addresses.Classes.PrimaryWeaponAttachment1, id, c.PrimaryWeaponAttachment1);
-                SetClass(Addresses.Classes.PrimaryWeaponAttachment2, id, c.PrimaryWeaponAttachment2);
-                SetClass(Addresses.Classes.PrimaryWeaponReticle, id, c.PrimaryWeaponReticle);
-                SetClass(Addresses.Classes.PrimaryWeaponCamo, id, c.PrimaryWeaponCamo);
-                SetClass(Addresses.Classes.SecondaryWeapon, id, c.SecondaryWeapon);
-                SetClass(Addresses.Classes.SecondaryWeaponProficiency, id, c.SecondaryWeaponProficiency);
-                SetClass(Addresses.Classes.SecondaryWeaponAttachment1, id, c.SecondaryWeaponAttachment1);
-                SetClass(Addresses.Classes.SecondaryWeaponAttachment2, id, c.SecondaryWeaponAttachment2);
-                SetClass(Addresses.Classes.SecondaryWeaponReticle, id, c.SecondaryWeaponReticle);
-                SetClass(Addresses.Classes.SecondaryWeaponCamo, id, c.SecondaryWeaponCamo);
-                SetClass(Addresses.Classes.Lethal, id, c.Lethal);
-                SetClass(Addresses.Classes.Tactical, id, c.Tactical);
-                SetClass(Addresses.Classes.Perk1, id, c.Perk1);
-                SetClass(Addresses.Classes.Perk2, id, c.Perk2);
-                SetClass(Addresses.Classes.Perk3, id, c.Perk3);
-                SetClass(Addresses.Classes.StrikePackage, id, c.StrikePackage);
-                SetClass(Addresses.Classes.Assault1, id, c.Assault1);
-                SetClass(Addresses.Classes.Assault2, id, c.Assault2);
-                SetClass(Addresses.Classes.Assault3, id, c.Assault3);
-                SetClass(Addresses.Classes.Support1, id, c.Support1);
-                SetClass(Addresses.Classes.Support2, id, c.Support2);
-                SetClass(Addresses.Classes.Support3, id, c.Support3);
-                SetClass(Addresses.Classes.Specialist1, id, c.Specialist1);
-                SetClass(Addresses.Classes.Specialist2, id, c.Specialist2);
-                SetClass(Addresses.Classes.Specialist3, id, c.Specialist3);
-                SetClass(Addresses.Classes.Deathstreak, id, c.Deathstreak);
                 SetClassName(id, c.Name);
-                SetClass(Addresses.Classes.GodmodeClass1, id, c.Godmode ? GmodeIndex.Godmode : GmodeIndex.NONE);
+                SetClassInfo(Addresses.Classes.PrimaryWeapon, id, c.PrimaryWeapon);
+                SetClassInfo(Addresses.Classes.PrimaryWeaponProficiency, id, c.PrimaryWeaponProficiency);
+                SetClassInfo(Addresses.Classes.PrimaryWeaponAttachment1, id, c.PrimaryWeaponAttachment1);
+                SetClassInfo(Addresses.Classes.PrimaryWeaponAttachment2, id, c.PrimaryWeaponAttachment2);
+                SetClassInfo(Addresses.Classes.PrimaryWeaponReticle, id, c.PrimaryWeaponReticle);
+                SetClassInfo(Addresses.Classes.PrimaryWeaponCamo, id, c.PrimaryWeaponCamo);
+                SetClassInfo(Addresses.Classes.SecondaryWeapon, id, c.SecondaryWeapon);
+                SetClassInfo(Addresses.Classes.SecondaryWeaponProficiency, id, c.SecondaryWeaponProficiency);
+                SetClassInfo(Addresses.Classes.SecondaryWeaponAttachment1, id, c.SecondaryWeaponAttachment1);
+                SetClassInfo(Addresses.Classes.SecondaryWeaponAttachment2, id, c.SecondaryWeaponAttachment2);
+                SetClassInfo(Addresses.Classes.SecondaryWeaponReticle, id, c.SecondaryWeaponReticle);
+                SetClassInfo(Addresses.Classes.SecondaryWeaponCamo, id, c.SecondaryWeaponCamo);
+                SetClassInfo(Addresses.Classes.Lethal, id, c.Lethal);
+                SetClassInfo(Addresses.Classes.Tactical, id, c.Tactical);
+                SetClassInfo(Addresses.Classes.Perk1, id, c.Perk1);
+                SetClassInfo(Addresses.Classes.Perk2, id, c.Perk2);
+                SetClassInfo(Addresses.Classes.Perk3, id, c.Perk3);
+                SetClassInfo(Addresses.Classes.StrikePackage, id, c.StrikePackage);
+                SetClassInfo(Addresses.Classes.Assault1, id, c.Assault1);
+                SetClassInfo(Addresses.Classes.Assault2, id, c.Assault2);
+                SetClassInfo(Addresses.Classes.Assault3, id, c.Assault3);
+                SetClassInfo(Addresses.Classes.Support1, id, c.Support1);
+                SetClassInfo(Addresses.Classes.Support2, id, c.Support2);
+                SetClassInfo(Addresses.Classes.Support3, id, c.Support3);
+                SetClassInfo(Addresses.Classes.Specialist1, id, c.Specialist1);
+                SetClassInfo(Addresses.Classes.Specialist2, id, c.Specialist2);
+                SetClassInfo(Addresses.Classes.Specialist3, id, c.Specialist3);
+                SetClassInfo(Addresses.Classes.Deathstreak, id, c.Deathstreak);
+                SetClassInfo(Addresses.Classes.GodmodeClass1, id, c.Godmode ? GmodeIndex.Godmode : GmodeIndex.NONE);
             }
         }
-        #endregion
+        #endregion Set
+
+        #endregion Classes Functions
     }
 }

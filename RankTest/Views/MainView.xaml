@@ -4,8 +4,8 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-             xmlns:System="clr-namespace:System;assembly=mscorlib"
              xmlns:beh="clr-namespace:RankTest.Behaviors"
+             xmlns:converters="clr-namespace:RankTest.Converters"
              xmlns:viewModels="clr-namespace:RankTest.ViewModels"
              xmlns:local="clr-namespace:RankTest"
              mc:Ignorable="d" 
@@ -38,81 +38,6 @@
         <Style TargetType="{x:Type mah:NumericUpDown}">
             <Setter Property="Margin" Value="3"/>
         </Style>
-        <ObjectDataProvider x:Key="WeaponEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="local:WeaponIndex"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-        <ObjectDataProvider x:Key="ProficienciesEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="local:Proficiencies"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-        <ObjectDataProvider x:Key="AttachmentsEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="local:Attachments"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-        <ObjectDataProvider x:Key="ReticlesEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="local:Reticle"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-        <ObjectDataProvider x:Key="CamosEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="local:Camos"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-        <ObjectDataProvider x:Key="LethalsEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="local:Lethal"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-        <ObjectDataProvider x:Key="TacticalsEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="local:Tactical"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-        <ObjectDataProvider x:Key="Perks1Enum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="local:Perks1"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-        <ObjectDataProvider x:Key="Perks2Enum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="local:Perks2"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-        <ObjectDataProvider x:Key="Perks3Enum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="local:Perks3"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-        <ObjectDataProvider x:Key="StrikePackageEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="local:StrikePackage"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-        <ObjectDataProvider x:Key="AssaultsEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="local:Assault"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-        <ObjectDataProvider x:Key="SupportsEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="local:Support"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-        <ObjectDataProvider x:Key="SpecialistsEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="local:Specialist"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-        <ObjectDataProvider x:Key="DeathstreaksEnum" MethodName="GetValues" ObjectType="{x:Type System:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="local:Deathstreaks"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
     </UserControl.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -121,7 +46,7 @@
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <Menu x:Name="MainMenu" Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="2">
@@ -145,7 +70,7 @@
                     <Button x:Name="legitStatsBtn" Content="Legit stats" Command="{Binding LegitStatsCommand}"/>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Grid.Row="1" Header="Generate classes name" IsEnabled="{Binding ClassesEnabled}">
+            <GroupBox Grid.Row="1" Header="Generate classes name" IsEnabled="{Binding StatsEnabled}">
                 <StackPanel Margin="-3">
                     <Button x:Name="colorClassesBtn" Content="Color classes" Command="{Binding ColorClassesCommand}"/>
                     <ComboBox x:Name="logoClassCmB" ItemsSource="{Binding LogoClasses}" SelectedItem="{Binding SelectedLogoClass}"/>
@@ -153,7 +78,7 @@
                     <Button x:Name="logoAllClassesNameBtn" Content="Logo all classes name" Command="{Binding LogoAllClassesNameCommand}"/>
                 </StackPanel>
             </GroupBox>
-            <GroupBox Grid.Row="2" Header="Generate custom classes" IsEnabled="{Binding ClassesEnabled}">
+            <GroupBox Grid.Row="2" Header="Generate custom classes" IsEnabled="{Binding StatsEnabled}">
                 <StackPanel Margin="-3">
                     <ComboBox x:Name="customClassesCmB" ItemsSource="{Binding CustomsClasses}" SelectedItem="{Binding SelectedCustomClass}"/>
                     <Button x:Name="setCustomClassBtn" Content="Godmode classes" Command="{Binding SetCustomClassCommand}"/>
@@ -281,19 +206,19 @@
                 </StackPanel>
             </TabItem>
             <TabItem x:Name="classesTabItem" Header="Classes">
-                <Grid Margin="-3" IsEnabled="{Binding ClassesEnabled}">
+                <Grid Margin="-3" IsEnabled="{Binding StatsEnabled}">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition/>
+                        <ColumnDefinition MaxWidth="200"/>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
-                    <DataGrid x:Name="ClassesDataGrid" Margin="3" MaxWidth="200"
+                    <DataGrid x:Name="ClassesDataGrid" Margin="3"
                           SelectionMode="Single" AutoGenerateColumns="False"
                           CanUserAddRows="False" CanUserDeleteRows="False"
                           CanUserReorderColumns="False" CanUserSortColumns="False"
                           CanUserResizeColumns="False" CanUserResizeRows="False"
-                          ItemsSource="{Binding Classes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedClass, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                          ItemsSource="{Binding Stats.Classes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedClass, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         <DataGrid.Columns>
                             <DataGridTextColumn x:Name="ClassesNameColumn" Binding="{Binding Name}" Header="Classes name" Width="1*"/>
                         </DataGrid.Columns>
@@ -304,60 +229,84 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <GroupBox Header="Primary weapon">
-                            <StackPanel Margin="-3">
-                                <DockPanel>
-                                    <Label Content="Weapon"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource WeaponEnum}}" SelectedItem="{Binding SelectedClass.PrimaryWeapon, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Proficiency"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource ProficienciesEnum}}" SelectedItem="{Binding SelectedClass.PrimaryWeaponProficiency, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Attachment 1"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource AttachmentsEnum}}" SelectedItem="{Binding SelectedClass.PrimaryWeaponAttachment1, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Attachment 2"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource AttachmentsEnum}}" SelectedItem="{Binding SelectedClass.PrimaryWeaponAttachment2, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Reticle"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource ReticlesEnum}}" SelectedItem="{Binding SelectedClass.PrimaryWeaponReticle, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Camo"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource CamosEnum}}" SelectedItem="{Binding SelectedClass.PrimaryWeaponCamo, Mode=TwoWay}"/>
-                                </DockPanel>
-                            </StackPanel>
+                            <Grid Margin="-3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Label Content="Weapon"/>
+                                <ComboBox Grid.Column="1" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.PrimaryWeapon, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.PrimaryWeapon}"/>
+                                <Label Grid.Row="1" Content="Proficiency"/>
+                                <ComboBox Grid.Column="1" Grid.Row="1" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.PrimaryWeaponProficiency, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.PrimaryWeaponProficiency}"/>
+                                <Label Grid.Row="2" Content="Attachment 1"/>
+                                <ComboBox Grid.Column="1" Grid.Row="2" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.PrimaryWeaponAttachment1, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.PrimaryWeaponAttachment1}"/>
+                                <Label Grid.Row="3" Content="Attachment 2"/>
+                                <ComboBox Grid.Column="1" Grid.Row="3" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.PrimaryWeaponAttachment2, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.PrimaryWeaponAttachment2}"/>
+                                <Label Grid.Row="4" Content="Reticle"/>
+                                <ComboBox Grid.Column="1" Grid.Row="4" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.PrimaryWeaponReticle, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.PrimaryWeaponReticle}"/>
+                                <Label Grid.Row="5" Content="Camo"/>
+                                <ComboBox Grid.Column="1" Grid.Row="5" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.PrimaryWeaponCamo, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.PrimaryWeaponCamo}"/>
+                            </Grid>
                         </GroupBox>
                         <GroupBox Grid.Row="1" Header="Secondary weapon">
-                            <StackPanel Margin="-3">
-                                <DockPanel>
-                                    <Label Content="Weapon"/>
-                                    <ComboBox Grid.Column="1" ItemsSource="{Binding Source={StaticResource WeaponEnum}}" SelectedItem="{Binding SelectedClass.SecondaryWeapon, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Proficiency"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource ProficienciesEnum}}" SelectedItem="{Binding SelectedClass.SecondaryWeaponProficiency, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Attachment 1"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource AttachmentsEnum}}" SelectedItem="{Binding SelectedClass.SecondaryWeaponAttachment1, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Attachment 2"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource AttachmentsEnum}}" SelectedItem="{Binding SelectedClass.SecondaryWeaponAttachment2, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Reticle"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource ReticlesEnum}}" SelectedItem="{Binding SelectedClass.SecondaryWeaponReticle, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Camo"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource CamosEnum}}" SelectedItem="{Binding SelectedClass.SecondaryWeaponCamo, Mode=TwoWay}"/>
-                                </DockPanel>
-                            </StackPanel>
+                            <Grid Margin="-3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Label Content="Weapon"/>
+                                <ComboBox Grid.Column="1" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.SecondaryWeapon, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.SecondaryWeapon}"/>
+                                <Label Grid.Row="1" Content="Proficiency"/>
+                                <ComboBox Grid.Column="1" Grid.Row="1" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.SecondaryWeaponProficiency, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.SecondaryWeaponProficiency}"/>
+                                <Label Grid.Row="2" Content="Attachment 1"/>
+                                <ComboBox Grid.Column="1" Grid.Row="2" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.SecondaryWeaponAttachment1, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.SecondaryWeaponAttachment1}"/>
+                                <Label Grid.Row="3" Content="Attachment 2"/>
+                                <ComboBox Grid.Column="1" Grid.Row="3" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.SecondaryWeaponAttachment2, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.SecondaryWeaponAttachment2}"/>
+                                <Label Grid.Row="4" Content="Reticle"/>
+                                <ComboBox Grid.Column="1" Grid.Row="4" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.SecondaryWeaponReticle, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.SecondaryWeaponReticle}"/>
+                                <Label Grid.Row="5" Content="Camo"/>
+                                <ComboBox Grid.Column="1" Grid.Row="5" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.SecondaryWeaponCamo, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.SecondaryWeaponCamo}"/>
+                            </Grid>
                         </GroupBox>
                     </Grid>
                     <Grid Grid.Column="2">
@@ -366,32 +315,49 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <GroupBox Header="Lethal/Tactical">
-                            <StackPanel Margin="-3">
-                                <DockPanel>
-                                    <Label Content="Lethal"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource LethalsEnum}}" SelectedItem="{Binding SelectedClass.Lethal, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Tactical"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource TacticalsEnum}}" SelectedItem="{Binding SelectedClass.Tactical, Mode=TwoWay}"/>
-                                </DockPanel>
-                            </StackPanel>
+                            <Grid Margin="-3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Label Content="Lethal"/>
+                                <ComboBox Grid.Column="1" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.Lethal, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.Lethal}"/>
+                                <Label Grid.Row="1" Content="Tactical"/>
+                                <ComboBox Grid.Column="1" Grid.Row="1" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.Tactical, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.Tactical}"/>
+                            </Grid>
                         </GroupBox>
                         <GroupBox Grid.Row="1" Header="Perks">
-                            <StackPanel Margin="-3">
-                                <DockPanel>
-                                    <Label Content="Perk 1"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource Perks1Enum}}" SelectedItem="{Binding SelectedClass.Perk1, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Perk 2"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource Perks2Enum}}" SelectedItem="{Binding SelectedClass.Perk2, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Perk 3"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource Perks3Enum}}" SelectedItem="{Binding SelectedClass.Perk3, Mode=TwoWay}"/>
-                                </DockPanel>
-                            </StackPanel>
+                            <Grid Margin="-3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Label Content="Perk 1"/>
+                                <ComboBox Grid.Column="1" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.Perk1, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.Perk1}"/>
+                                <Label Grid.Row="1" Content="Perk 2"/>
+                                <ComboBox Grid.Column="1" Grid.Row="1" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.Perk2, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.Perk2}"/>
+                                <Label Grid.Row="2" Content="Perk 3"/>
+                                <ComboBox Grid.Column="1" Grid.Row="2" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.Perk3, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.Perk3}"/>
+                            </Grid>
                         </GroupBox>
                     </Grid>
                     <Grid Grid.Column="3">
@@ -400,62 +366,80 @@
                             <RowDefinition Height="Auto"/>
                         </Grid.RowDefinitions>
                         <GroupBox Header="Strike package">
-                            <StackPanel Margin="-3">
-                                <DockPanel>
-                                    <Label Content="Strike package"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource StrikePackageEnum}}" SelectedItem="{Binding SelectedClass.StrikePackage, Mode=TwoWay}" beh:SelectionChangedBehavior.Command="{Binding StrikePackageChangedCommand}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Assault 1"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource AssaultsEnum}}" SelectedItem="{Binding SelectedClass.Assault1, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Assault 2"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource AssaultsEnum}}" SelectedItem="{Binding SelectedClass.Assault2, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Assault 3"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource AssaultsEnum}}" SelectedItem="{Binding SelectedClass.Assault3, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Support 1"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource SupportsEnum}}" SelectedItem="{Binding SelectedClass.Support1, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Support 2"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource SupportsEnum}}" SelectedItem="{Binding SelectedClass.Support2, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Support 3"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource SupportsEnum}}" SelectedItem="{Binding SelectedClass.Support3, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Specialist 1"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource SpecialistsEnum}}" SelectedItem="{Binding SelectedClass.Specialist1, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Specialist 2"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource SpecialistsEnum}}" SelectedItem="{Binding SelectedClass.Specialist2, Mode=TwoWay}"/>
-                                </DockPanel>
-                                <DockPanel>
-                                    <Label Content="Specialist 3"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource SpecialistsEnum}}" SelectedItem="{Binding SelectedClass.Specialist3, Mode=TwoWay}"/>
-                                </DockPanel>
-                            </StackPanel>
+                            <Grid Margin="-3">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Label Content="Strike package"/>
+                                <ComboBox Grid.Column="1" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.StrikePackage, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.StrikePackage}"
+                                          beh:SelectionChangedBehavior.Command="{Binding StrikePackageChangedCommand}"/>
+                                <Label Grid.Row="1" Content="Assault 1"/>
+                                <ComboBox Grid.Column="1" Grid.Row="1" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.Assault1, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.Assault1}"/>
+                                <Label Grid.Row="2" Content="Assault 2"/>
+                                <ComboBox Grid.Column="1" Grid.Row="2" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.Assault2, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.Assault2}"/>
+                                <Label Grid.Row="3" Content="Assault 3"/>
+                                <ComboBox Grid.Column="1" Grid.Row="3" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.Assault3, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.Assault3}"/>
+                                <Label Grid.Row="4" Content="Support 1"/>
+                                <ComboBox Grid.Column="1" Grid.Row="4" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.Support1, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.Support1}"/>
+                                <Label Grid.Row="5" Content="Support 2"/>
+                                <ComboBox Grid.Column="1" Grid.Row="5" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.Support2, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.Support2}"/>
+                                <Label Grid.Row="6" Content="Support 3"/>
+                                <ComboBox Grid.Column="1" Grid.Row="6" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.Support3, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.Support3}"/>
+                                <Label Grid.Row="7" Content="Specialist 1"/>
+                                <ComboBox Grid.Column="1" Grid.Row="7" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.Specialist1, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.Specialist1}"/>
+                                <Label Grid.Row="8" Content="Specialist 2"/>
+                                <ComboBox Grid.Column="1" Grid.Row="8" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.Specialist2, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.Specialist2}"/>
+                                <Label Grid.Row="9" Content="Specialist 3"/>
+                                <ComboBox Grid.Column="1" Grid.Row="9" DisplayMemberPath="Description" SelectedValuePath="Value"
+                                          ItemsSource="{Binding SelectedClass.Specialist3, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          SelectedValue="{Binding SelectedClass.Specialist3}"/>
+                            </Grid>
                         </GroupBox>
                         <GroupBox Grid.Row="1" Header="Deathstreak">
-                            <StackPanel Margin="-3">
-                                <DockPanel>
-                                    <Label Content="Deathstreak"/>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource DeathstreaksEnum}}" SelectedItem="{Binding SelectedClass.Deathstreak, Mode=TwoWay}"/>
-                                </DockPanel>
-                            </StackPanel>
+                            <DockPanel Margin="-3">
+                                <Label Content="Deathstreak"/>
+                                <ComboBox DisplayMemberPath="Description" SelectedValuePath="Value"
+                                              ItemsSource="{Binding SelectedClass.Deathstreak, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                              SelectedValue="{Binding SelectedClass.Deathstreak}"/>
+                            </DockPanel>
                         </GroupBox>
                     </Grid>
                 </Grid>
             </TabItem>
         </TabControl>
         <StatusBar Grid.Column="0" Grid.Row="2" Grid.ColumnSpan="2" VerticalAlignment="Bottom">
+            <StatusBarItem x:Name="statusItem" Content="{Binding Status}"/>
             <StatusBarItem x:Name="creatorItem" HorizontalAlignment="Right" Content="Created by Igris Modz"/>
         </StatusBar>
     </Grid>

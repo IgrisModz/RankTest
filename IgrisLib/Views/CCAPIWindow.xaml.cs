@@ -1,6 +1,6 @@
-﻿using IgrisLib.MessageBox;
-using IgrisLib.ViewModels;
+﻿using IgrisLib.ViewModels;
 using MahApps.Metro.Controls;
+using MahApps.Metro.Controls.Dialogs;
 using System.Linq;
 using System.Windows;
 
@@ -18,9 +18,9 @@ namespace IgrisLib.Views
         public CCAPIWindow(IConnectAPI api, ResourceDictionary resources)
         {
             Api = api;
-            ViewModel = new CCAPIViewModel(this, api, resources);
+            ViewModel = new CCAPIViewModel(this, DialogCoordinator.Instance, api, resources);
             InitializeComponent();
-            this.Resources = resources;
+            Resources = resources;
             listView.Focus();
         }
 
@@ -39,16 +39,21 @@ namespace IgrisLib.Views
         {
             if (ViewModel.Consoles.Count() > 0)
             {
-                this.ShowDialog();
+                ShowDialog();
             }
             else
             {
 
-                this.Result = false;
-                base.Close();
-                IgrisMessageBox.Show(this.Resources["noConsole"].ToString(), this.Resources["noConsoleTitle"].ToString(), MessageBoxButton.OK, MessageBoxImage.Hand);
+                Result = false;
+                Close();
+                SendError();
             }
             return Result;
+        }
+
+        private async void SendError()
+        {
+            await this.ShowMessageAsync(Resources["noConsoleTitle"].ToString(), Resources["noConsole"].ToString());
         }
     }
 }
