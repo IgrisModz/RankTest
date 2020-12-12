@@ -1,6 +1,7 @@
 ﻿using IgrisLib;
 using IgrisLib.MessageBox;
 using IgrisLib.Mvvm;
+using MahApps.Metro.Controls.Dialogs;
 using RankTest.Core;
 using RankTest.Properties;
 using System;
@@ -29,7 +30,9 @@ namespace RankTest.ViewModels
                     PS3 = new PS3API(new TMAPI());
                     break;
             }
-            SelectedClass = new Class();
+            Extension = new FunctionsExtension(Addresses.Length);
+            Dialog = DialogCoordinator.Instance;
+            SelectedClass = new Class(PS3, Extension);
             TMAPICommand = new DelegateCommand(TMAPI, CanExecuteTMAPI);
             CCAPICommand = new DelegateCommand(CCAPI, CanExecuteCCAPI);
             PS3MAPICommand = new DelegateCommand(PS3MAPI, CanExecutePS3MAPI);
@@ -146,7 +149,7 @@ namespace RankTest.ViewModels
 
         ~MainViewModel()
         {
-           Dispose();
+            Dispose();
         }
 
         #region CanExecute
@@ -208,7 +211,7 @@ namespace RankTest.ViewModels
         #endregion
 
         #region Connection
-        private void Connect()
+        private async void Connect()
         {
             if (PS3.ConnectTarget())
             {
@@ -216,27 +219,29 @@ namespace RankTest.ViewModels
                 {
                     if (PS3.GetCurrentGame() == "Modern Warfare® 3")
                     {
-                        IgrisMessageBox.Show($"Succesfully attached to \"{PS3.CurrentGame}\".", "Success..", MessageBoxButton.OK, MessageBoxImage.Information);
+                        await Dialog.ShowMessageAsync(this, "Success..", $"Succesfully attached to \"{PS3.CurrentGame}\".", MessageDialogStyle.Affirmative);
+                        //IgrisMessageBox.Show($"Succesfully attached to \"{PS3.CurrentGame}\".", "Success..", MessageBoxButton.OK, MessageBoxImage.Information);
                         Status = $"Attached to {PS3.CurrentGame}!";
                         IsAttached = true;
+                        StatsTypeEnabled = true;
                         return;
                     }
                     else
                     {
-                        IgrisMessageBox.Show($"The process is \"{PS3.CurrentGame}\".", "Wrong process...", MessageBoxButton.OK, MessageBoxImage.Hand);
+                        await Dialog.ShowMessageAsync(this, "Wrong process...", $"The process is \"{PS3.CurrentGame}\".", MessageDialogStyle.Affirmative);
                         Status = $"{PS3.CurrentGame} is a wrong process, immediate detachment!";
                         PS3.DetachProcess();
                     }
                 }
                 else
                 {
-                    IgrisMessageBox.Show("Unable to attach process.", "Attach failed..", MessageBoxButton.OK, MessageBoxImage.Hand);
+                    await Dialog.ShowMessageAsync(this, "Attach failed..", "Unable to attach process.", MessageDialogStyle.Affirmative);
                     Status = "Attached to any process!";
                 }
             }
             else
             {
-                IgrisMessageBox.Show("Unable to connect to PS3.", "Connect failed..", MessageBoxButton.OK, MessageBoxImage.Hand);
+                await Dialog.ShowMessageAsync(this, "Connect failed..", "Unable to connect to PS3.", MessageDialogStyle.Affirmative);
                 Status = "Connected to any ps3!";
             }
             IsAttached = false;
@@ -245,29 +250,29 @@ namespace RankTest.ViewModels
 
         private bool GetAttached()
         {
-            if (!PS3.GetAttached())
-            {
-                IsAttached = false;
-                Stats = null;
-                SelectedClass = null;
-                StatsEnabled = false;
-                UnlockAll = false;
-                GodmodeBool = false;
-                Status = !PS3.GetConnected() ? "Connected to any ps3!" : "Attached to any process!";
-                return false;
-            }
-            return true;
+            if (PS3.GetAttached())
+                return true;
+            IsAttached = false;
+            Stats = null;
+            SelectedClass = null;
+            StatsEnabled = false;
+            UnlockAll = false;
+            GodmodeBool = false;
+            StatsTypeEnabled = false;
+            Status = !PS3.GetConnected() ? "Connected to any ps3!" : "Attached to any process!";
+            return false;
         }
 
         private void GetStats()
         {
             if (!GetAttached())
                 return;
-            Stats = new Stats(PS3);
-            PS3.GetMemory(Addresses.StatsEntry, Stats.Extension.Dump);
+            Stats = new Stats(PS3, Extension);
+            PS3.GetMemory(Addresses.StatsEntry[(uint)StatsType], Stats.Extension.Dump);
             Stats = Stats.GetStats();
             SelectedClass = Stats.Classes.FirstOrDefault();
             StatsEnabled = true;
+            StatsTypeEnabled = false;
             Status = "Stats getted!";
         }
 
@@ -276,11 +281,12 @@ namespace RankTest.ViewModels
             if (!GetAttached())
                 return;
             Stats.SetStats(UnlockAll);
-            PS3.SetMemory(Addresses.StatsEntry, Stats.Extension.Dump);
+            PS3.SetMemory(Addresses.StatsEntry[(uint)StatsType], Stats.Extension.Dump);
             Stats = null;
             SelectedClass = null;
             StatsEnabled = false;
             UnlockAll = false;
+            StatsTypeEnabled = true;
             Status = $"Stats setted {(UnlockAll ? "with" : "without")} unlock all!";
         }
 
@@ -298,7 +304,7 @@ namespace RankTest.ViewModels
             int deaths = rnd.Next(60000, 120000);
             int hits = rnd.Next(800000, 1400000);
             int misses = rnd.Next(80000, 300000);
-            Stats = new Stats(PS3)
+            Stats = new Stats(PS3, Extension)
             {
                 Prestige = prestige,
                 Level = 80,
@@ -344,7 +350,7 @@ namespace RankTest.ViewModels
             int deaths = rnd.Next(60000, 120000);
             int hits = rnd.Next(800000, 1400000);
             int misses = rnd.Next(80000, 300000);
-            Stats = new Stats(PS3)
+            Stats = new Stats(PS3, Extension)
             {
                 Prestige = prestige,
                 Level = 80,

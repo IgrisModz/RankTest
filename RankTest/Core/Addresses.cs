@@ -2,19 +2,7 @@
 {
     internal class Addresses
     {
-        internal static uint IsInParty => 0x89D29E;
-
-        public static uint LocalXUIDString => 0x1BBBC58;
-
-        internal static uint[] GrabberLevel => new uint[2] { 0x8A80E4, 0x89D18C };
-
-        internal static uint[] GrabberXUID => new uint[2] { 0x8A8220, 0x89D2C8 };
-
-        internal static uint GrabberInterval => 0x178;
-
-        internal static uint StatsEntry => 0x1C187D4;
-
-        internal static uint StatsSplitScreenEntry => 0x1C1B7D9;
+        internal static uint[] StatsEntry => new uint[] { 0x1C187D4, 0x1C1B7D9 };
 
         internal static uint Length => 0x3005;
 

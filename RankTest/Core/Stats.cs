@@ -1,12 +1,11 @@
 ﻿using IgrisLib;
-using IgrisLib.Mvvm;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace RankTest.Core
 {
-    public class Stats : ViewModelBase
+    public class Stats
     {
         public int Prestige { get; set; }
 
@@ -54,16 +53,16 @@ namespace RankTest.Core
 
         public int MWPrestige { get; set; }
 
-        public ObservableCollection<Class> Classes { get => GetValue(() => Classes); set => SetValue(() => Classes, value); }
+        public ObservableCollection<Class> Classes { get; set; }
 
         public PS3API PS3 { get; set; }
 
         internal FunctionsExtension Extension { get; set; }
 
-        public Stats(PS3API ps3)
+        public Stats(PS3API ps3, FunctionsExtension extension)
         {
             PS3 = ps3;
-            Extension = new FunctionsExtension(Addresses.Length);
+            Extension = extension;
             Level = 1;
             TimePlayed = new int[3];
             DoubleXp = new int[3];
@@ -249,7 +248,7 @@ namespace RankTest.Core
 
         public Stats GetStats()
         {
-            return new Stats(PS3)
+            return new Stats(PS3, Extension)
             {
                 Prestige = GetStat(Addresses.Stats.Prestige),
                 Level = GetLevel(),
@@ -296,7 +295,7 @@ namespace RankTest.Core
 
         public void SetTimePlayed(int Days, int Hours, int Minutes)
         {
-            int Value = (((Days * 86400) + (Hours * 3600)) + (Minutes * 60)) / 3;
+            int Value = ((Days * 86400) + (Hours * 3600) + (Minutes * 60)) / 3;
             byte[] bytes = BitConverter.GetBytes(Convert.ToInt32(Value.ToString()));
             SetStat(Addresses.Stats.TimePlayed1, bytes);
             SetStat(Addresses.Stats.TimePlayed2, bytes);
@@ -305,14 +304,14 @@ namespace RankTest.Core
 
         public void SetDoubleXp(int Days, int Hours, int Minutes)
         {
-            int Value = ((Days * 86400) + (Hours * 3600)) + (Minutes * 60);
+            int Value = (Days * 86400) + (Hours * 3600) + (Minutes * 60);
             byte[] bytes = BitConverter.GetBytes(Convert.ToInt32(Value.ToString()));
             SetStat(Addresses.Stats.DoubleXP, bytes);
         }
 
         public void SetDoubleWeaponXp(int Days, int Hours, int Minutes)
         {
-            int Value = ((Days * 86400) + (Hours * 3600)) + (Minutes * 60);
+            int Value = (Days * 86400) + (Hours * 3600) + (Minutes * 60);
             byte[] bytes = BitConverter.GetBytes(Convert.ToInt32(Value.ToString()));
             SetStat(Addresses.Stats.DoubleWeaponXP, bytes);
         }
@@ -671,9 +670,15 @@ namespace RankTest.Core
             SetStat(Addresses.Stats.Assists, Assists);
             SetStat(Addresses.Stats.Killstreak, Killstreak);
 
+            //int time = ((TimePlayed[0] * 86400) + (TimePlayed[1] * 3600) + (TimePlayed[2] * 60)) / 3;
+            //SetStat(Addresses.Stats.TimePlayed1, time);
+            //SetStat(Addresses.Stats.TimePlayed2, time);
+            //SetStat(Addresses.Stats.TimePlayed3, time);
+
             SetTimePlayed(TimePlayed[0], TimePlayed[1], TimePlayed[2]);
             SetDoubleXp(DoubleXp[0], DoubleXp[1], DoubleXp[2]);
             SetDoubleWeaponXp(DoubleWeaponXp[0], DoubleWeaponXp[1], DoubleWeaponXp[2]);
+
             SetStat(Addresses.Stats.Hits, Hits);
             SetStat(Addresses.Stats.Misses, Misses);
 
@@ -694,112 +699,23 @@ namespace RankTest.Core
         #region Classes Functions
 
         #region Get
-        public T GetEnumSelection<T>(byte value)
-        {
-            return (T)Enum.Parse(typeof(T), value.ToString());
-        }
-
-        private T GetClassInfo<T>(Addresses.Classes offset, uint index)
-        {
-            return GetEnumSelection<T>(Extension.ReadByte((uint)offset + (index * (uint)Addresses.Classes.ClassInterval)));
-
-        }
-
-        private string GetClassName(uint index)
-        {
-            return Extension.ReadString((uint)Addresses.Classes.ClassName1 + (index * (uint)Addresses.Classes.ClassInterval));
-        }
-
         public ObservableCollection<Class> GetClasses()
         {
             ObservableCollection<Class> classes = new ObservableCollection<Class>();
             for (uint i = 0; i < 20; i++)
             {
-                classes.Add(new Class()
-                {
-                    Id = i,
-                    Name = GetClassName(i),
-                    PrimaryWeapon = GetClassInfo<WeaponIndex>(Addresses.Classes.PrimaryWeapon, i),
-                    PrimaryWeaponProficiency = GetClassInfo<Proficiencies>(Addresses.Classes.PrimaryWeaponProficiency, i),
-                    PrimaryWeaponAttachment1 = GetClassInfo<Attachments>(Addresses.Classes.PrimaryWeaponAttachment1, i),
-                    PrimaryWeaponAttachment2 = GetClassInfo<Attachments>(Addresses.Classes.PrimaryWeaponAttachment2, i),
-                    PrimaryWeaponReticle = GetClassInfo<Reticle>(Addresses.Classes.PrimaryWeaponReticle, i),
-                    PrimaryWeaponCamo = GetClassInfo<Camos>(Addresses.Classes.PrimaryWeaponCamo, i),
-                    SecondaryWeapon = GetClassInfo<WeaponIndex>(Addresses.Classes.SecondaryWeapon, i),
-                    SecondaryWeaponProficiency = GetClassInfo<Proficiencies>(Addresses.Classes.SecondaryWeaponProficiency, i),
-                    SecondaryWeaponAttachment1 = GetClassInfo<Attachments>(Addresses.Classes.SecondaryWeaponAttachment1, i),
-                    SecondaryWeaponAttachment2 = GetClassInfo<Attachments>(Addresses.Classes.SecondaryWeaponAttachment2, i),
-                    SecondaryWeaponReticle = GetClassInfo<Reticle>(Addresses.Classes.SecondaryWeaponReticle, i),
-                    SecondaryWeaponCamo = GetClassInfo<Camos>(Addresses.Classes.SecondaryWeapon, i),
-                    Lethal = GetClassInfo<Lethal>(Addresses.Classes.Lethal, i),
-                    Tactical = GetClassInfo<Tactical>(Addresses.Classes.Tactical, i),
-                    Perk1 = GetClassInfo<Perks1>(Addresses.Classes.Perk1, i),
-                    Perk2 = GetClassInfo<Perks2>(Addresses.Classes.Perk2, i),
-                    Perk3 = GetClassInfo<Perks3>(Addresses.Classes.Perk3, i),
-                    StrikePackage = GetClassInfo<StrikePackage>(Addresses.Classes.StrikePackage, i),
-                    Assault1 = GetClassInfo<Assault>(Addresses.Classes.Assault1, i),
-                    Assault2 = GetClassInfo<Assault>(Addresses.Classes.Assault2, i),
-                    Assault3 = GetClassInfo<Assault>(Addresses.Classes.Assault3, i),
-                    Support1 = GetClassInfo<Support>(Addresses.Classes.Support1, i),
-                    Support2 = GetClassInfo<Support>(Addresses.Classes.Support2, i),
-                    Support3 = GetClassInfo<Support>(Addresses.Classes.Support3, i),
-                    Specialist1 = GetClassInfo<Specialist>(Addresses.Classes.Specialist1, i),
-                    Specialist2 = GetClassInfo<Specialist>(Addresses.Classes.Specialist2, i),
-                    Specialist3 = GetClassInfo<Specialist>(Addresses.Classes.Specialist3, i),
-                    Deathstreak = GetClassInfo<Deathstreaks>(Addresses.Classes.Deathstreak, i),
-                    Godmode = Convert.ToBoolean(GetClassInfo<GmodeIndex>(Addresses.Classes.GodmodeClass1, i)),
-                });
+                classes.Add(new Class(PS3, Extension) { Id = i }.Get());
             }
             return classes;
         }
         #endregion Get
 
         #region Set
-        private void SetClassInfo<T>(Addresses.Classes offsets, uint index, T value)
-        {
-            Extension.WriteByte((uint)offsets + (index * (uint)Addresses.Classes.ClassInterval), Convert.ToByte(value));
-        }
-
-        private void SetClassName(uint index, string name)
-        {
-            Extension.WriteString((uint)Addresses.Classes.ClassName1 + (index * (uint)Addresses.Classes.ClassInterval), name);
-        }
-
         public void SetClasses()
         {
-            foreach (var c in Classes)
+            foreach (var @class in Classes)
             {
-                uint id = c.Id;
-                SetClassName(id, c.Name);
-                SetClassInfo(Addresses.Classes.PrimaryWeapon, id, c.PrimaryWeapon);
-                SetClassInfo(Addresses.Classes.PrimaryWeaponProficiency, id, c.PrimaryWeaponProficiency);
-                SetClassInfo(Addresses.Classes.PrimaryWeaponAttachment1, id, c.PrimaryWeaponAttachment1);
-                SetClassInfo(Addresses.Classes.PrimaryWeaponAttachment2, id, c.PrimaryWeaponAttachment2);
-                SetClassInfo(Addresses.Classes.PrimaryWeaponReticle, id, c.PrimaryWeaponReticle);
-                SetClassInfo(Addresses.Classes.PrimaryWeaponCamo, id, c.PrimaryWeaponCamo);
-                SetClassInfo(Addresses.Classes.SecondaryWeapon, id, c.SecondaryWeapon);
-                SetClassInfo(Addresses.Classes.SecondaryWeaponProficiency, id, c.SecondaryWeaponProficiency);
-                SetClassInfo(Addresses.Classes.SecondaryWeaponAttachment1, id, c.SecondaryWeaponAttachment1);
-                SetClassInfo(Addresses.Classes.SecondaryWeaponAttachment2, id, c.SecondaryWeaponAttachment2);
-                SetClassInfo(Addresses.Classes.SecondaryWeaponReticle, id, c.SecondaryWeaponReticle);
-                SetClassInfo(Addresses.Classes.SecondaryWeaponCamo, id, c.SecondaryWeaponCamo);
-                SetClassInfo(Addresses.Classes.Lethal, id, c.Lethal);
-                SetClassInfo(Addresses.Classes.Tactical, id, c.Tactical);
-                SetClassInfo(Addresses.Classes.Perk1, id, c.Perk1);
-                SetClassInfo(Addresses.Classes.Perk2, id, c.Perk2);
-                SetClassInfo(Addresses.Classes.Perk3, id, c.Perk3);
-                SetClassInfo(Addresses.Classes.StrikePackage, id, c.StrikePackage);
-                SetClassInfo(Addresses.Classes.Assault1, id, c.Assault1);
-                SetClassInfo(Addresses.Classes.Assault2, id, c.Assault2);
-                SetClassInfo(Addresses.Classes.Assault3, id, c.Assault3);
-                SetClassInfo(Addresses.Classes.Support1, id, c.Support1);
-                SetClassInfo(Addresses.Classes.Support2, id, c.Support2);
-                SetClassInfo(Addresses.Classes.Support3, id, c.Support3);
-                SetClassInfo(Addresses.Classes.Specialist1, id, c.Specialist1);
-                SetClassInfo(Addresses.Classes.Specialist2, id, c.Specialist2);
-                SetClassInfo(Addresses.Classes.Specialist3, id, c.Specialist3);
-                SetClassInfo(Addresses.Classes.Deathstreak, id, c.Deathstreak);
-                SetClassInfo(Addresses.Classes.GodmodeClass1, id, c.Godmode ? GmodeIndex.Godmode : GmodeIndex.NONE);
+                @class.Set();
             }
         }
         #endregion Set

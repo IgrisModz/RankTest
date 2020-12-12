@@ -601,4 +601,12 @@ namespace RankTest.Core
         [Description("Godmode")]
         Godmode = 0x6B
     }
+
+    public enum StatsType
+    {
+        [Description("Online")]
+        Online,
+        [Description("Split screen")]
+        SplitScreen
+    }
 }

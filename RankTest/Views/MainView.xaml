@@ -4,16 +4,19 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+             xmlns:dialog="clr-namespace:MahApps.Metro.Controls.Dialogs;assembly=MahApps.Metro"
              xmlns:beh="clr-namespace:RankTest.Behaviors"
              xmlns:converters="clr-namespace:RankTest.Converters"
              xmlns:viewModels="clr-namespace:RankTest.ViewModels"
              xmlns:local="clr-namespace:RankTest"
-             mc:Ignorable="d" 
-             d:DesignHeight="550" d:DesignWidth="820">
+             mc:Ignorable="d"
+             dialog:DialogParticipation.Register="{Binding}"
+             d:DesignHeight="560" d:DesignWidth="820">
     <UserControl.DataContext>
         <viewModels:MainViewModel/>
     </UserControl.DataContext>
     <UserControl.Resources>
+        <converters:EnumToCollectionConverter x:Key="enumToCollection"/>
         <Style TargetType="{x:Type Button}" BasedOn="{StaticResource MahApps.Styles.Button}">
             <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal"/>
             <Setter Property="mah:ControlsHelper.CornerRadius" Value="0"/>
@@ -36,6 +39,7 @@
             <Setter Property="mah:ControlsHelper.ContentCharacterCasing" Value="Normal"/>
         </Style>
         <Style TargetType="{x:Type mah:NumericUpDown}">
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
             <Setter Property="Margin" Value="3"/>
         </Style>
     </UserControl.Resources>
@@ -60,6 +64,9 @@
         <StackPanel Grid.Column="0" Grid.Row="1">
             <GroupBox x:Name="actionStatsGroup" Header="Actions">
                 <StackPanel Margin="-3">
+                    <ComboBox x:Name="splitScreenStatsChB" Margin="3" DisplayMemberPath="Description" SelectedValuePath="Value"
+                              ItemsSource="{Binding StatsType, Converter={StaticResource enumToCollection}, Mode=OneTime}"
+                              SelectedValue="{Binding StatsType}" IsEnabled="{Binding StatsTypeEnabled}"/>
                     <Button x:Name="getStatsBtn" Content="Get stats" Command="{Binding GetStatsCommand}"/>
                     <Button x:Name="setStatsBtn" Content="Set stats" Command="{Binding SetStatsCommand}"/>
                 </StackPanel>
@@ -214,11 +221,12 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <DataGrid x:Name="ClassesDataGrid" Margin="3"
-                          SelectionMode="Single" AutoGenerateColumns="False"
-                          CanUserAddRows="False" CanUserDeleteRows="False"
-                          CanUserReorderColumns="False" CanUserSortColumns="False"
-                          CanUserResizeColumns="False" CanUserResizeRows="False"
-                          ItemsSource="{Binding Stats.Classes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SelectedClass, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                              SelectionMode="Single" AutoGenerateColumns="False"
+                              CanUserAddRows="False" CanUserDeleteRows="False"
+                              CanUserReorderColumns="False" CanUserSortColumns="False"
+                              CanUserResizeColumns="False" CanUserResizeRows="False"
+                              ItemsSource="{Binding Stats.Classes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              SelectedItem="{Binding SelectedClass, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                         <DataGrid.Columns>
                             <DataGridTextColumn x:Name="ClassesNameColumn" Binding="{Binding Name}" Header="Classes name" Width="1*"/>
                         </DataGrid.Columns>
@@ -244,27 +252,27 @@
                                 </Grid.RowDefinitions>
                                 <Label Content="Weapon"/>
                                 <ComboBox Grid.Column="1" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.PrimaryWeapon, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.PrimaryWeapon, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.PrimaryWeapon}"/>
                                 <Label Grid.Row="1" Content="Proficiency"/>
                                 <ComboBox Grid.Column="1" Grid.Row="1" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.PrimaryWeaponProficiency, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.PrimaryWeaponProficiency, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.PrimaryWeaponProficiency}"/>
                                 <Label Grid.Row="2" Content="Attachment 1"/>
                                 <ComboBox Grid.Column="1" Grid.Row="2" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.PrimaryWeaponAttachment1, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.PrimaryWeaponAttachment1, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.PrimaryWeaponAttachment1}"/>
                                 <Label Grid.Row="3" Content="Attachment 2"/>
                                 <ComboBox Grid.Column="1" Grid.Row="3" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.PrimaryWeaponAttachment2, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.PrimaryWeaponAttachment2, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.PrimaryWeaponAttachment2}"/>
                                 <Label Grid.Row="4" Content="Reticle"/>
                                 <ComboBox Grid.Column="1" Grid.Row="4" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.PrimaryWeaponReticle, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.PrimaryWeaponReticle, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.PrimaryWeaponReticle}"/>
                                 <Label Grid.Row="5" Content="Camo"/>
                                 <ComboBox Grid.Column="1" Grid.Row="5" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.PrimaryWeaponCamo, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.PrimaryWeaponCamo, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.PrimaryWeaponCamo}"/>
                             </Grid>
                         </GroupBox>
@@ -284,27 +292,27 @@
                                 </Grid.RowDefinitions>
                                 <Label Content="Weapon"/>
                                 <ComboBox Grid.Column="1" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.SecondaryWeapon, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.SecondaryWeapon, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.SecondaryWeapon}"/>
                                 <Label Grid.Row="1" Content="Proficiency"/>
                                 <ComboBox Grid.Column="1" Grid.Row="1" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.SecondaryWeaponProficiency, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.SecondaryWeaponProficiency, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.SecondaryWeaponProficiency}"/>
                                 <Label Grid.Row="2" Content="Attachment 1"/>
                                 <ComboBox Grid.Column="1" Grid.Row="2" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.SecondaryWeaponAttachment1, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.SecondaryWeaponAttachment1, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.SecondaryWeaponAttachment1}"/>
                                 <Label Grid.Row="3" Content="Attachment 2"/>
                                 <ComboBox Grid.Column="1" Grid.Row="3" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.SecondaryWeaponAttachment2, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.SecondaryWeaponAttachment2, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.SecondaryWeaponAttachment2}"/>
                                 <Label Grid.Row="4" Content="Reticle"/>
                                 <ComboBox Grid.Column="1" Grid.Row="4" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.SecondaryWeaponReticle, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.SecondaryWeaponReticle, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.SecondaryWeaponReticle}"/>
                                 <Label Grid.Row="5" Content="Camo"/>
                                 <ComboBox Grid.Column="1" Grid.Row="5" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.SecondaryWeaponCamo, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.SecondaryWeaponCamo, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.SecondaryWeaponCamo}"/>
                             </Grid>
                         </GroupBox>
@@ -326,11 +334,11 @@
                                 </Grid.RowDefinitions>
                                 <Label Content="Lethal"/>
                                 <ComboBox Grid.Column="1" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.Lethal, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.Lethal, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.Lethal}"/>
                                 <Label Grid.Row="1" Content="Tactical"/>
                                 <ComboBox Grid.Column="1" Grid.Row="1" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.Tactical, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.Tactical, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.Tactical}"/>
                             </Grid>
                         </GroupBox>
@@ -347,15 +355,15 @@
                                 </Grid.RowDefinitions>
                                 <Label Content="Perk 1"/>
                                 <ComboBox Grid.Column="1" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.Perk1, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.Perk1, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.Perk1}"/>
                                 <Label Grid.Row="1" Content="Perk 2"/>
                                 <ComboBox Grid.Column="1" Grid.Row="1" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.Perk2, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.Perk2, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.Perk2}"/>
                                 <Label Grid.Row="2" Content="Perk 3"/>
                                 <ComboBox Grid.Column="1" Grid.Row="2" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.Perk3, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.Perk3, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.Perk3}"/>
                             </Grid>
                         </GroupBox>
@@ -385,44 +393,44 @@
                                 </Grid.RowDefinitions>
                                 <Label Content="Strike package"/>
                                 <ComboBox Grid.Column="1" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.StrikePackage, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.StrikePackage, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.StrikePackage}"
                                           beh:SelectionChangedBehavior.Command="{Binding StrikePackageChangedCommand}"/>
                                 <Label Grid.Row="1" Content="Assault 1"/>
                                 <ComboBox Grid.Column="1" Grid.Row="1" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.Assault1, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.Assault1, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.Assault1}"/>
                                 <Label Grid.Row="2" Content="Assault 2"/>
                                 <ComboBox Grid.Column="1" Grid.Row="2" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.Assault2, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.Assault2, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.Assault2}"/>
                                 <Label Grid.Row="3" Content="Assault 3"/>
                                 <ComboBox Grid.Column="1" Grid.Row="3" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.Assault3, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.Assault3, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.Assault3}"/>
                                 <Label Grid.Row="4" Content="Support 1"/>
                                 <ComboBox Grid.Column="1" Grid.Row="4" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.Support1, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.Support1, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.Support1}"/>
                                 <Label Grid.Row="5" Content="Support 2"/>
                                 <ComboBox Grid.Column="1" Grid.Row="5" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.Support2, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.Support2, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.Support2}"/>
                                 <Label Grid.Row="6" Content="Support 3"/>
                                 <ComboBox Grid.Column="1" Grid.Row="6" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.Support3, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.Support3, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.Support3}"/>
                                 <Label Grid.Row="7" Content="Specialist 1"/>
                                 <ComboBox Grid.Column="1" Grid.Row="7" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.Specialist1, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.Specialist1, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.Specialist1}"/>
                                 <Label Grid.Row="8" Content="Specialist 2"/>
                                 <ComboBox Grid.Column="1" Grid.Row="8" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.Specialist2, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.Specialist2, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.Specialist2}"/>
                                 <Label Grid.Row="9" Content="Specialist 3"/>
                                 <ComboBox Grid.Column="1" Grid.Row="9" DisplayMemberPath="Description" SelectedValuePath="Value"
-                                          ItemsSource="{Binding SelectedClass.Specialist3, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                          ItemsSource="{Binding SelectedClass.Specialist3, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                           SelectedValue="{Binding SelectedClass.Specialist3}"/>
                             </Grid>
                         </GroupBox>
@@ -430,7 +438,7 @@
                             <DockPanel Margin="-3">
                                 <Label Content="Deathstreak"/>
                                 <ComboBox DisplayMemberPath="Description" SelectedValuePath="Value"
-                                              ItemsSource="{Binding SelectedClass.Deathstreak, Converter={converters:EnumToCollectionConverter}, Mode=OneTime}"
+                                              ItemsSource="{Binding SelectedClass.Deathstreak, Converter={StaticResource enumToCollection}, Mode=OneTime}"
                                               SelectedValue="{Binding SelectedClass.Deathstreak}"/>
                             </DockPanel>
                         </GroupBox>

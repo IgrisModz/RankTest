@@ -4,17 +4,17 @@ using System.Text;
 
 namespace RankTest.Core
 {
-    internal class FunctionsExtension
+    public class FunctionsExtension
     {
-        internal byte[] Dump { get; set; }
+        public byte[] Dump { get; set; }
 
-        internal FunctionsExtension(uint length)
+        public FunctionsExtension(uint length)
         {
             Dump = new byte[length];
         }
 
         /// <summary>Read a signed byte.</summary>
-        internal sbyte ReadSByte(uint offset)
+        public sbyte ReadSByte(uint offset)
         {
             byte[] buffer = new byte[1];
             Array.Copy(Dump, offset, buffer, 0, 1);
@@ -22,7 +22,7 @@ namespace RankTest.Core
         }
 
         /// <summary>Read a byte a check if his value. This return a bool according the byte detected.</summary>
-        internal bool ReadBool(uint offset)
+        public bool ReadBool(uint offset)
         {
             byte[] buffer = new byte[1];
             Array.Copy(Dump, offset, buffer, 0, 1);
@@ -30,7 +30,7 @@ namespace RankTest.Core
         }
 
         /// <summary>Read and return an integer 16 bits.</summary>
-        internal short ReadInt16(uint offset, bool reverse = true)
+        public short ReadInt16(uint offset, bool reverse = true)
         {
             byte[] buffer = new byte[2];
             Array.Copy(Dump, offset, buffer, 0, 2);
@@ -40,7 +40,7 @@ namespace RankTest.Core
         }
 
         /// <summary>Read and return an integer 32 bits.</summary>
-        internal int ReadInt32(uint offset, bool reverse = true)
+        public int ReadInt32(uint offset, bool reverse = true)
         {
             byte[] buffer = new byte[4];
             Array.Copy(Dump, offset, buffer, 0, 4);
@@ -50,7 +50,7 @@ namespace RankTest.Core
         }
 
         /// <summary>Read and return an integer 64 bits.</summary>
-        internal long ReadInt64(uint offset, bool reverse = true)
+        public long ReadInt64(uint offset, bool reverse = true)
         {
             byte[] buffer = new byte[8];
             Array.Copy(Dump, offset, buffer, 0, 8);
@@ -60,7 +60,7 @@ namespace RankTest.Core
         }
 
         /// <summary>Read and return a byte.</summary>
-        internal byte ReadByte(uint offset)
+        public byte ReadByte(uint offset)
         {
             byte[] buffer = new byte[1];
             Array.Copy(Dump, offset, buffer, 0, 1);
@@ -68,7 +68,7 @@ namespace RankTest.Core
         }
 
         /// <summary>Read and return an array of byte.</summary>
-        internal byte[] ReadBytes(uint offset, int length)
+        public byte[] ReadBytes(uint offset, int length)
         {
             byte[] buffer = new byte[length];
             Array.Copy(Dump, offset, buffer, 0, length);
@@ -76,7 +76,7 @@ namespace RankTest.Core
         }
 
         /// <summary>Read and return an unsigned integer 16 bits.</summary>
-        internal ushort ReadUInt16(uint offset, bool reverse = true)
+        public ushort ReadUInt16(uint offset, bool reverse = true)
         {
             byte[] buffer = new byte[2];
             Array.Copy(Dump, offset, buffer, 0, 2);
@@ -86,7 +86,7 @@ namespace RankTest.Core
         }
 
         /// <summary>Read and return an unsigned integer 32 bits.</summary>
-        internal uint ReadUInt32(uint offset, bool reverse = true)
+        public uint ReadUInt32(uint offset, bool reverse = true)
         {
             byte[] buffer = new byte[4];
             Array.Copy(Dump, offset, buffer, 0, 4);
@@ -96,7 +96,7 @@ namespace RankTest.Core
         }
 
         /// <summary>Read and return an unsigned integer 64 bits.</summary>
-        internal ulong ReadUInt64(uint offset, bool reverse = true)
+        public ulong ReadUInt64(uint offset, bool reverse = true)
         {
             byte[] buffer = new byte[8];
             Array.Copy(Dump, offset, buffer, 0, 8);
@@ -106,7 +106,7 @@ namespace RankTest.Core
         }
 
         /// <summary>Read and return a Float.</summary>
-        internal float ReadFloat(uint offset, bool reverse = true)
+        public float ReadFloat(uint offset, bool reverse = true)
         {
             byte[] buffer = new byte[4];
             Array.Copy(Dump, offset, buffer, 0, 4);
@@ -116,7 +116,7 @@ namespace RankTest.Core
         }
 
         /// <summary>Read and return an array of Floats.</summary>
-        internal float[] ReadFloats(uint offset, int arrayLength = 3, bool reverse = true)
+        public float[] ReadFloats(uint offset, int arrayLength = 3, bool reverse = true)
         {
             float[] vec = new float[arrayLength];
             for (int i = 0; i < arrayLength; i++)
@@ -131,7 +131,7 @@ namespace RankTest.Core
         }
 
         /// <summary>Read and return a Double.</summary>
-        internal double ReadDouble(uint offset, bool reverse = true)
+        public double ReadDouble(uint offset, bool reverse = true)
         {
             byte[] buffer = new byte[8];
             Array.Copy(Dump, offset, buffer, 0, 8);
@@ -141,7 +141,7 @@ namespace RankTest.Core
         }
 
         /// <summary>Read a string very fast by buffer and stop only when a byte null is detected (0x00).</summary>
-        internal string ReadString(uint offset)
+        public string ReadString(uint offset)
         {
             int blocksize = 40;
             int scalesize = 0;
