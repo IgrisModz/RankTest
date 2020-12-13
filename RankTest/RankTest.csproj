@@ -41,6 +41,9 @@
     <Reference Include="ControlzEx, Version=4.0.0.0, Culture=neutral, PublicKeyToken=69f1c32f803d307e, processorArchitecture=MSIL">
       <HintPath>..\packages\ControlzEx.4.4.0\lib\net462\ControlzEx.dll</HintPath>
     </Reference>
+    <Reference Include="IgrisLib.MahApps.Metro">
+      <HintPath>..\..\IgrisLib\IgrisLib.MahApps.Metro\bin\Debug\IgrisLib.MahApps.Metro.dll</HintPath>
+    </Reference>
     <Reference Include="MahApps.Metro, Version=2.0.0.0, Culture=neutral, PublicKeyToken=51482d6f650b2b3f, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.2.4.3\lib\net47\MahApps.Metro.dll</HintPath>
     </Reference>
@@ -131,12 +134,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\modern-warfare-3.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\IgrisLib\IgrisLib.csproj">
-      <Project>{33185b7e-0f40-4538-9b56-443028e1cf49}</Project>
-      <Name>IgrisLib</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

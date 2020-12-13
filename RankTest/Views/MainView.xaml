@@ -8,7 +8,6 @@
              xmlns:beh="clr-namespace:RankTest.Behaviors"
              xmlns:converters="clr-namespace:RankTest.Converters"
              xmlns:viewModels="clr-namespace:RankTest.ViewModels"
-             xmlns:local="clr-namespace:RankTest"
              mc:Ignorable="d"
              dialog:DialogParticipation.Register="{Binding}"
              d:DesignHeight="560" d:DesignWidth="820">
